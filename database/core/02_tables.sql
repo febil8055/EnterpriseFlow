@@ -51,3 +51,33 @@ CREATE TABLE organization (
 
     updated_by           VARCHAR2(100 CHAR)
 );
+
+CREATE TABLE department (
+    department_id        NUMBER(19,0)
+        CONSTRAINT pk_department PRIMARY KEY,
+
+    organization_id      NUMBER(19,0)
+        CONSTRAINT nn_department_organization NOT NULL,
+
+    department_name      VARCHAR2(200 CHAR)
+        CONSTRAINT nn_department_name NOT NULL,
+
+    department_code      VARCHAR2(50 CHAR)
+        CONSTRAINT nn_department_code NOT NULL,
+
+    active_flag           CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_department_active_flag NOT NULL,
+
+    created_at           TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_department_created_at NOT NULL,
+
+    created_by           VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_department_created_by NOT NULL,
+
+    updated_at           TIMESTAMP,
+
+    updated_by           VARCHAR2(100 CHAR)
+);

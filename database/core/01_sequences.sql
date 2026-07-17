@@ -13,3 +13,9 @@ CREATE SEQUENCE seq_organization
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
+
+CREATE SEQUENCE seq_department
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;

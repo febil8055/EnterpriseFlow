@@ -27,3 +27,22 @@ CHECK (REGEXP_LIKE(organization_code, '^[A-Z0-9_]+$'));
 ALTER TABLE organization
 ADD CONSTRAINT ck_organization_active_flag
 CHECK (active_flag IN ('Y', 'N'));
+
+-- DEPARTMENT -----------------------------------------------------
+
+ALTER TABLE department
+ADD CONSTRAINT uk_department_code
+UNIQUE (department_code);
+
+ALTER TABLE department
+ADD CONSTRAINT ck_department_code
+CHECK (REGEXP_LIKE(department_code, '^[A-Z0-9_]+$'));
+
+ALTER TABLE department
+ADD CONSTRAINT ck_department_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
+ALTER TABLE department
+ADD CONSTRAINT fk_department_organization
+FOREIGN KEY (organization_id)
+REFERENCES organization (organization_id);

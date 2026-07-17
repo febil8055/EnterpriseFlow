@@ -43,3 +43,33 @@ COMMENT ON COLUMN organization.updated_at IS
 
 COMMENT ON COLUMN organization.updated_by IS
     'User/identity that made the most recent update.';
+
+COMMENT ON TABLE department IS
+    'Organizational sub-unit belonging to exactly one ORGANIZATION.';
+
+COMMENT ON COLUMN department.department_id IS
+    'Surrogate primary key, populated from SEQ_DEPARTMENT by TRG_DEPARTMENT_BI.';
+
+COMMENT ON COLUMN department.organization_id IS
+    'Owning organization. References ORGANIZATION(organization_id).';
+
+COMMENT ON COLUMN department.department_name IS
+    'Display name of the department.';
+
+COMMENT ON COLUMN department.department_code IS
+    'Short, unique, uppercase system identifier for the department.';
+
+COMMENT ON COLUMN department.active_flag IS
+    'Y = department is active/enabled, N = soft-deleted or disabled.';
+
+COMMENT ON COLUMN department.created_at IS
+    'Timestamp the row was inserted, set once by TRG_DEPARTMENT_BI. Never updated.';
+
+COMMENT ON COLUMN department.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN department.updated_at IS
+    'Timestamp of the most recent update, set by TRG_DEPARTMENT_BU. NULL until first update.';
+
+COMMENT ON COLUMN department.updated_by IS
+    'User/identity that made the most recent update.';

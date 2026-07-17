@@ -12,3 +12,7 @@
 -- one automatically, and an un-indexed FK column causes full table
 -- locks on the parent during child deletes/updates.
 -- ============================================================
+
+-- DEPARTMENT.organization_id (FK -> organization)
+CREATE INDEX ix_department_organization
+    ON department (organization_id);
