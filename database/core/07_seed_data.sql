@@ -1,0 +1,9 @@
+-- ============================================================
+-- EnterpriseFlow - Core Module
+-- 07_seed_data.sql
+--
+-- ORGANIZATION holds real tenant data, not reference/lookup values,
+-- so no seed rows belong here. Lookup-style master tables added
+-- later in this module (e.g. STATUS, PRIORITY) will get their fixed
+-- value sets seeded in this file.
+-- ============================================================
