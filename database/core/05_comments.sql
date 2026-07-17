@@ -303,3 +303,47 @@ COMMENT ON COLUMN employee.updated_at IS
 
 COMMENT ON COLUMN employee.updated_by IS
     'User/identity that made the most recent update.';
+
+COMMENT ON TABLE user_account IS
+    'Login/security identity, scoped to an ORGANIZATION. Deliberately separate '
+    'from EMPLOYEE - not every login is an employee (contractor, client portal '
+    'user, service account) and not every employee has a login.';
+
+COMMENT ON COLUMN user_account.user_account_id IS
+    'Surrogate primary key, populated from SEQ_USER_ACCOUNT by TRG_USER_ACCOUNT_BI.';
+
+COMMENT ON COLUMN user_account.organization_id IS
+    'Owning organization (the tenant this login belongs to). References ORGANIZATION(organization_id).';
+
+COMMENT ON COLUMN user_account.employee_id IS
+    'Optional link to the EMPLOYEE this account belongs to. NULL for contractor/client/service accounts.';
+
+COMMENT ON COLUMN user_account.username IS
+    'Unique login name.';
+
+COMMENT ON COLUMN user_account.email IS
+    'Unique email address for the account, used for notifications/password reset.';
+
+COMMENT ON COLUMN user_account.password_hash IS
+    'Salted password hash only. The application layer must never write plaintext to this column.';
+
+COMMENT ON COLUMN user_account.user_type IS
+    'Kind of identity this account represents: EMPLOYEE, CONTRACTOR, CLIENT, or SERVICE.';
+
+COMMENT ON COLUMN user_account.last_login_at IS
+    'Timestamp of the most recent successful login, maintained by the application/auth layer.';
+
+COMMENT ON COLUMN user_account.active_flag IS
+    'Y = account can log in, N = disabled/locked out.';
+
+COMMENT ON COLUMN user_account.created_at IS
+    'Timestamp the row was inserted, set once by TRG_USER_ACCOUNT_BI. Never updated.';
+
+COMMENT ON COLUMN user_account.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN user_account.updated_at IS
+    'Timestamp of the most recent update, set by TRG_USER_ACCOUNT_BU. NULL until first update.';
+
+COMMENT ON COLUMN user_account.updated_by IS
+    'User/identity that made the most recent update.';

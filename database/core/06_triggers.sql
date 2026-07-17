@@ -187,3 +187,25 @@ BEGIN
     :NEW.created_by := :OLD.created_by;
 END;
 /
+
+CREATE OR REPLACE TRIGGER trg_user_account_bi
+BEFORE INSERT ON user_account
+FOR EACH ROW
+BEGIN
+    IF :NEW.user_account_id IS NULL THEN
+        :NEW.user_account_id := seq_user_account.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_user_account_bu
+BEFORE UPDATE ON user_account
+FOR EACH ROW
+BEGIN
+    :NEW.updated_at := SYSTIMESTAMP;
+    :NEW.updated_by := USER;
+
+    :NEW.created_at := :OLD.created_at;
+    :NEW.created_by := :OLD.created_by;
+END;
+/

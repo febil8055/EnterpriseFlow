@@ -308,3 +308,53 @@ CREATE TABLE employee (
 
     updated_by             VARCHAR2(100 CHAR)
 );
+
+-- USER_ACCOUNT is a login/security identity, deliberately separate
+-- from EMPLOYEE: not every login is an employee (contractors, client
+-- portal users, service accounts) and not every employee needs a
+-- login. employee_id is therefore nullable.
+CREATE TABLE user_account (
+    user_account_id        NUMBER(19,0)
+        CONSTRAINT pk_user_account PRIMARY KEY,
+
+    organization_id        NUMBER(19,0)
+        CONSTRAINT nn_user_account_organization NOT NULL,
+
+    employee_id             NUMBER(19,0),
+
+    username                VARCHAR2(100 CHAR)
+        CONSTRAINT nn_user_account_username NOT NULL,
+
+    email                   VARCHAR2(255 CHAR)
+        CONSTRAINT nn_user_account_email NOT NULL,
+
+    -- Store only a salted hash (e.g. via APEX/ORDS auth or a PL/SQL
+    -- package using DBMS_CRYPTO) - the application layer must never
+    -- write plaintext here.
+    password_hash            VARCHAR2(255 CHAR)
+        CONSTRAINT nn_user_account_password_hash NOT NULL,
+
+    user_type                VARCHAR2(30 CHAR)
+        DEFAULT 'EMPLOYEE'
+        CONSTRAINT nn_user_account_user_type NOT NULL
+        CONSTRAINT ck_user_account_user_type
+            CHECK (user_type IN ('EMPLOYEE', 'CONTRACTOR', 'CLIENT', 'SERVICE')),
+
+    last_login_at            TIMESTAMP,
+
+    active_flag              CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_user_account_active_flag NOT NULL,
+
+    created_at               TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_user_account_created_at NOT NULL,
+
+    created_by               VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_user_account_created_by NOT NULL,
+
+    updated_at               TIMESTAMP,
+
+    updated_by               VARCHAR2(100 CHAR)
+);

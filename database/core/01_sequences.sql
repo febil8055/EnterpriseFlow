@@ -55,3 +55,9 @@ CREATE SEQUENCE seq_location
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
+
+CREATE SEQUENCE seq_user_account
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;

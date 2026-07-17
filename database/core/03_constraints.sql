@@ -173,3 +173,32 @@ ALTER TABLE employee
 ADD CONSTRAINT fk_employee_role
 FOREIGN KEY (role_id)
 REFERENCES role (role_id);
+
+-- USER_ACCOUNT ---------------------------------------------------
+
+ALTER TABLE user_account
+ADD CONSTRAINT uk_user_account_username
+UNIQUE (username);
+
+ALTER TABLE user_account
+ADD CONSTRAINT uk_user_account_email
+UNIQUE (email);
+
+ALTER TABLE user_account
+ADD CONSTRAINT ck_user_account_email
+CHECK (REGEXP_LIKE(email, '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'));
+
+ALTER TABLE user_account
+ADD CONSTRAINT ck_user_account_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
+ALTER TABLE user_account
+ADD CONSTRAINT fk_user_account_organization
+FOREIGN KEY (organization_id)
+REFERENCES organization (organization_id);
+
+-- Deliberately nullable - see comment on the table definition.
+ALTER TABLE user_account
+ADD CONSTRAINT fk_user_account_employee
+FOREIGN KEY (employee_id)
+REFERENCES employee (employee_id);

@@ -38,3 +38,10 @@ CREATE INDEX ix_employee_department
 
 CREATE INDEX ix_employee_role
     ON employee (role_id);
+
+-- USER_ACCOUNT FK columns
+CREATE INDEX ix_user_account_organization
+    ON user_account (organization_id);
+
+CREATE INDEX ix_user_account_employee
+    ON user_account (employee_id);
