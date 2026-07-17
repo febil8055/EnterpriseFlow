@@ -107,6 +107,71 @@ COMMENT ON COLUMN role.updated_at IS
 COMMENT ON COLUMN role.updated_by IS
     'User/identity that made the most recent update.';
 
+COMMENT ON TABLE status IS
+    'Shared lookup of lifecycle states, scoped per owning entity via ENTITY_TYPE '
+    '(e.g. PROJECT, TASK). Referenced by PROJECT.status_id and TASK.status_id.';
+
+COMMENT ON COLUMN status.status_id IS
+    'Surrogate primary key, populated from SEQ_STATUS by TRG_STATUS_BI.';
+
+COMMENT ON COLUMN status.entity_type IS
+    'Discriminator identifying which entity this status value applies to (e.g. PROJECT, TASK).';
+
+COMMENT ON COLUMN status.status_code IS
+    'Short, uppercase system identifier for the status, unique within ENTITY_TYPE.';
+
+COMMENT ON COLUMN status.status_name IS
+    'Display name of the status.';
+
+COMMENT ON COLUMN status.sort_order IS
+    'Relative display order within the same ENTITY_TYPE (e.g. in dropdowns/kanban columns).';
+
+COMMENT ON COLUMN status.active_flag IS
+    'Y = status value is selectable, N = retired/disabled.';
+
+COMMENT ON COLUMN status.created_at IS
+    'Timestamp the row was inserted, set once by TRG_STATUS_BI. Never updated.';
+
+COMMENT ON COLUMN status.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN status.updated_at IS
+    'Timestamp of the most recent update, set by TRG_STATUS_BU. NULL until first update.';
+
+COMMENT ON COLUMN status.updated_by IS
+    'User/identity that made the most recent update.';
+
+COMMENT ON TABLE priority IS
+    'Shared lookup of priority levels (e.g. Low/Medium/High), reused across entities '
+    'that need one. Referenced by TASK.priority_id.';
+
+COMMENT ON COLUMN priority.priority_id IS
+    'Surrogate primary key, populated from SEQ_PRIORITY by TRG_PRIORITY_BI.';
+
+COMMENT ON COLUMN priority.priority_code IS
+    'Short, unique, uppercase system identifier for the priority level.';
+
+COMMENT ON COLUMN priority.priority_name IS
+    'Display name of the priority level.';
+
+COMMENT ON COLUMN priority.sort_order IS
+    'Relative display order (e.g. Low=1, Medium=2, High=3).';
+
+COMMENT ON COLUMN priority.active_flag IS
+    'Y = priority value is selectable, N = retired/disabled.';
+
+COMMENT ON COLUMN priority.created_at IS
+    'Timestamp the row was inserted, set once by TRG_PRIORITY_BI. Never updated.';
+
+COMMENT ON COLUMN priority.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN priority.updated_at IS
+    'Timestamp of the most recent update, set by TRG_PRIORITY_BU. NULL until first update.';
+
+COMMENT ON COLUMN priority.updated_by IS
+    'User/identity that made the most recent update.';
+
 COMMENT ON TABLE employee IS
     'Person employed by an ORGANIZATION, assigned to one DEPARTMENT and one ROLE.';
 

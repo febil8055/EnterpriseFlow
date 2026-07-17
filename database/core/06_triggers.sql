@@ -78,6 +78,50 @@ BEGIN
 END;
 /
 
+CREATE OR REPLACE TRIGGER trg_status_bi
+BEFORE INSERT ON status
+FOR EACH ROW
+BEGIN
+    IF :NEW.status_id IS NULL THEN
+        :NEW.status_id := seq_status.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_status_bu
+BEFORE UPDATE ON status
+FOR EACH ROW
+BEGIN
+    :NEW.updated_at := SYSTIMESTAMP;
+    :NEW.updated_by := USER;
+
+    :NEW.created_at := :OLD.created_at;
+    :NEW.created_by := :OLD.created_by;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_priority_bi
+BEFORE INSERT ON priority
+FOR EACH ROW
+BEGIN
+    IF :NEW.priority_id IS NULL THEN
+        :NEW.priority_id := seq_priority.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_priority_bu
+BEFORE UPDATE ON priority
+FOR EACH ROW
+BEGIN
+    :NEW.updated_at := SYSTIMESTAMP;
+    :NEW.updated_by := USER;
+
+    :NEW.created_at := :OLD.created_at;
+    :NEW.created_by := :OLD.created_by;
+END;
+/
+
 CREATE OR REPLACE TRIGGER trg_employee_bi
 BEFORE INSERT ON employee
 FOR EACH ROW

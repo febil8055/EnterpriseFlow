@@ -114,6 +114,77 @@ CREATE TABLE role (
     updated_by             VARCHAR2(100 CHAR)
 );
 
+-- STATUS and PRIORITY are shared lookup tables rather than one table
+-- per owning entity. STATUS carries an ENTITY_TYPE discriminator
+-- because lifecycle states genuinely differ per entity (PROJECT vs
+-- TASK); PRIORITY does not, since priority levels (Low/Medium/High)
+-- are the same concept regardless of what they're attached to.
+
+CREATE TABLE status (
+    status_id              NUMBER(19,0)
+        CONSTRAINT pk_status PRIMARY KEY,
+
+    entity_type            VARCHAR2(30 CHAR)
+        CONSTRAINT nn_status_entity_type NOT NULL,
+
+    status_code            VARCHAR2(50 CHAR)
+        CONSTRAINT nn_status_code NOT NULL,
+
+    status_name            VARCHAR2(100 CHAR)
+        CONSTRAINT nn_status_name NOT NULL,
+
+    sort_order             NUMBER(5,0)
+        DEFAULT 0
+        CONSTRAINT nn_status_sort_order NOT NULL,
+
+    active_flag            CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_status_active_flag NOT NULL,
+
+    created_at             TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_status_created_at NOT NULL,
+
+    created_by             VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_status_created_by NOT NULL,
+
+    updated_at             TIMESTAMP,
+
+    updated_by             VARCHAR2(100 CHAR)
+);
+
+CREATE TABLE priority (
+    priority_id            NUMBER(19,0)
+        CONSTRAINT pk_priority PRIMARY KEY,
+
+    priority_code          VARCHAR2(50 CHAR)
+        CONSTRAINT nn_priority_code NOT NULL,
+
+    priority_name          VARCHAR2(100 CHAR)
+        CONSTRAINT nn_priority_name NOT NULL,
+
+    sort_order             NUMBER(5,0)
+        DEFAULT 0
+        CONSTRAINT nn_priority_sort_order NOT NULL,
+
+    active_flag            CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_priority_active_flag NOT NULL,
+
+    created_at             TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_priority_created_at NOT NULL,
+
+    created_by             VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_priority_created_by NOT NULL,
+
+    updated_at             TIMESTAMP,
+
+    updated_by             VARCHAR2(100 CHAR)
+);
+
 CREATE TABLE employee (
     employee_id           NUMBER(19,0)
         CONSTRAINT pk_employee PRIMARY KEY,

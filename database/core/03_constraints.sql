@@ -66,6 +66,36 @@ ADD CONSTRAINT fk_role_department
 FOREIGN KEY (department_id)
 REFERENCES department (department_id);
 
+-- STATUS -------------------------------------------------------
+
+-- A status code is only unique within its entity type - PROJECT and
+-- TASK can each have their own 'OPEN' without colliding.
+ALTER TABLE status
+ADD CONSTRAINT uk_status_entity_code
+UNIQUE (entity_type, status_code);
+
+ALTER TABLE status
+ADD CONSTRAINT ck_status_code
+CHECK (REGEXP_LIKE(status_code, '^[A-Z0-9_]+$'));
+
+ALTER TABLE status
+ADD CONSTRAINT ck_status_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
+-- PRIORITY -------------------------------------------------------
+
+ALTER TABLE priority
+ADD CONSTRAINT uk_priority_code
+UNIQUE (priority_code);
+
+ALTER TABLE priority
+ADD CONSTRAINT ck_priority_code
+CHECK (REGEXP_LIKE(priority_code, '^[A-Z0-9_]+$'));
+
+ALTER TABLE priority
+ADD CONSTRAINT ck_priority_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
 -- EMPLOYEE -----------------------------------------------------
 
 ALTER TABLE employee
