@@ -209,3 +209,109 @@ BEGIN
     :NEW.created_by := :OLD.created_by;
 END;
 /
+
+-- PROJECT.status_id must reference a STATUS row where entity_type =
+-- 'PROJECT'. The FK constraint alone can't express that, so both the
+-- BI and BU triggers validate it explicitly and raise a clear error
+-- rather than let a mismatched status silently attach.
+CREATE OR REPLACE TRIGGER trg_project_bi
+BEFORE INSERT ON project
+FOR EACH ROW
+DECLARE
+    v_entity_type status.entity_type%TYPE;
+BEGIN
+    IF :NEW.project_id IS NULL THEN
+        :NEW.project_id := seq_project.NEXTVAL;
+    END IF;
+
+    SELECT entity_type INTO v_entity_type
+    FROM status
+    WHERE status_id = :NEW.status_id;
+
+    IF v_entity_type != 'PROJECT' THEN
+        RAISE_APPLICATION_ERROR(-20001,
+            'PROJECT.status_id must reference a STATUS row with entity_type = ''PROJECT''.');
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20002, 'PROJECT.status_id does not reference an existing STATUS row.');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_project_bu
+BEFORE UPDATE ON project
+FOR EACH ROW
+DECLARE
+    v_entity_type status.entity_type%TYPE;
+BEGIN
+    :NEW.updated_at := SYSTIMESTAMP;
+    :NEW.updated_by := USER;
+
+    :NEW.created_at := :OLD.created_at;
+    :NEW.created_by := :OLD.created_by;
+
+    SELECT entity_type INTO v_entity_type
+    FROM status
+    WHERE status_id = :NEW.status_id;
+
+    IF v_entity_type != 'PROJECT' THEN
+        RAISE_APPLICATION_ERROR(-20001,
+            'PROJECT.status_id must reference a STATUS row with entity_type = ''PROJECT''.');
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20002, 'PROJECT.status_id does not reference an existing STATUS row.');
+END;
+/
+
+-- TASK.status_id must reference a STATUS row where entity_type =
+-- 'TASK'. Same rationale as PROJECT above.
+CREATE OR REPLACE TRIGGER trg_task_bi
+BEFORE INSERT ON task
+FOR EACH ROW
+DECLARE
+    v_entity_type status.entity_type%TYPE;
+BEGIN
+    IF :NEW.task_id IS NULL THEN
+        :NEW.task_id := seq_task.NEXTVAL;
+    END IF;
+
+    SELECT entity_type INTO v_entity_type
+    FROM status
+    WHERE status_id = :NEW.status_id;
+
+    IF v_entity_type != 'TASK' THEN
+        RAISE_APPLICATION_ERROR(-20003,
+            'TASK.status_id must reference a STATUS row with entity_type = ''TASK''.');
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20004, 'TASK.status_id does not reference an existing STATUS row.');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_task_bu
+BEFORE UPDATE ON task
+FOR EACH ROW
+DECLARE
+    v_entity_type status.entity_type%TYPE;
+BEGIN
+    :NEW.updated_at := SYSTIMESTAMP;
+    :NEW.updated_by := USER;
+
+    :NEW.created_at := :OLD.created_at;
+    :NEW.created_by := :OLD.created_by;
+
+    SELECT entity_type INTO v_entity_type
+    FROM status
+    WHERE status_id = :NEW.status_id;
+
+    IF v_entity_type != 'TASK' THEN
+        RAISE_APPLICATION_ERROR(-20003,
+            'TASK.status_id must reference a STATUS row with entity_type = ''TASK''.');
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20004, 'TASK.status_id does not reference an existing STATUS row.');
+END;
+/

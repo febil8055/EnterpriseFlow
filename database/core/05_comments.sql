@@ -347,3 +347,95 @@ COMMENT ON COLUMN user_account.updated_at IS
 
 COMMENT ON COLUMN user_account.updated_by IS
     'User/identity that made the most recent update.';
+
+COMMENT ON TABLE project IS
+    'Unit of delivered work for an ORGANIZATION, optionally billed to a CLIENT.';
+
+COMMENT ON COLUMN project.project_id IS
+    'Surrogate primary key, populated from SEQ_PROJECT by TRG_PROJECT_BI.';
+
+COMMENT ON COLUMN project.organization_id IS
+    'Owning organization. References ORGANIZATION(organization_id).';
+
+COMMENT ON COLUMN project.client_id IS
+    'Optional client this project is delivered for. References CLIENT(client_id). NULL for internal projects.';
+
+COMMENT ON COLUMN project.status_id IS
+    'Current lifecycle status. References STATUS(status_id) where STATUS.entity_type = ''PROJECT'', '
+    'enforced by TRG_PROJECT_BI/BU rather than a declarative constraint.';
+
+COMMENT ON COLUMN project.project_code IS
+    'Short, unique, uppercase system identifier for the project.';
+
+COMMENT ON COLUMN project.project_name IS
+    'Display name of the project.';
+
+COMMENT ON COLUMN project.description IS
+    'Free-text description of the project scope.';
+
+COMMENT ON COLUMN project.start_date IS
+    'Planned or actual start date.';
+
+COMMENT ON COLUMN project.end_date IS
+    'Planned or actual end date. Must not be before start_date (CK_PROJECT_DATES).';
+
+COMMENT ON COLUMN project.active_flag IS
+    'Y = project is active/enabled, N = soft-deleted or disabled.';
+
+COMMENT ON COLUMN project.created_at IS
+    'Timestamp the row was inserted, set once by TRG_PROJECT_BI. Never updated.';
+
+COMMENT ON COLUMN project.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN project.updated_at IS
+    'Timestamp of the most recent update, set by TRG_PROJECT_BU. NULL until first update.';
+
+COMMENT ON COLUMN project.updated_by IS
+    'User/identity that made the most recent update.';
+
+COMMENT ON TABLE task IS
+    'Unit of work belonging to a single PROJECT, optionally assigned to an EMPLOYEE.';
+
+COMMENT ON COLUMN task.task_id IS
+    'Surrogate primary key, populated from SEQ_TASK by TRG_TASK_BI.';
+
+COMMENT ON COLUMN task.project_id IS
+    'Owning project. References PROJECT(project_id).';
+
+COMMENT ON COLUMN task.assigned_to_employee_id IS
+    'Employee currently assigned to this task. References EMPLOYEE(employee_id). NULL if unassigned.';
+
+COMMENT ON COLUMN task.status_id IS
+    'Current lifecycle status. References STATUS(status_id) where STATUS.entity_type = ''TASK'', '
+    'enforced by TRG_TASK_BI/BU rather than a declarative constraint.';
+
+COMMENT ON COLUMN task.priority_id IS
+    'Priority level. References PRIORITY(priority_id).';
+
+COMMENT ON COLUMN task.task_code IS
+    'Short, unique, uppercase system identifier for the task.';
+
+COMMENT ON COLUMN task.task_name IS
+    'Display name of the task.';
+
+COMMENT ON COLUMN task.description IS
+    'Free-text description of the task.';
+
+COMMENT ON COLUMN task.due_date IS
+    'Date the task is due.';
+
+COMMENT ON COLUMN task.active_flag IS
+    'Y = task is active/enabled, N = soft-deleted or disabled.';
+
+COMMENT ON COLUMN task.created_at IS
+    'Timestamp the row was inserted, set once by TRG_TASK_BI. Never updated.';
+
+COMMENT ON COLUMN task.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN task.updated_at IS
+    'Timestamp of the most recent update, set by TRG_TASK_BU. NULL until first update.';
+
+COMMENT ON COLUMN task.updated_by IS
+    'User/identity that made the most recent update.';

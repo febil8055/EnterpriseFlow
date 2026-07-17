@@ -358,3 +358,93 @@ CREATE TABLE user_account (
 
     updated_by               VARCHAR2(100 CHAR)
 );
+
+-- PROJECT.status_id and TASK.status_id both reference the shared
+-- STATUS table. The FK only guarantees status_id exists somewhere in
+-- STATUS - it does not by itself guarantee entity_type = 'PROJECT' or
+-- 'TASK'. A declarative CHECK constraint can't safely enforce that
+-- (CHECK constraints assume row-level immutability and won't re-fire
+-- if STATUS.entity_type changes later), so that match is validated in
+-- TRG_PROJECT_BI/BU and TRG_TASK_BI/BU in 06_triggers.sql instead.
+CREATE TABLE project (
+    project_id              NUMBER(19,0)
+        CONSTRAINT pk_project PRIMARY KEY,
+
+    organization_id         NUMBER(19,0)
+        CONSTRAINT nn_project_organization NOT NULL,
+
+    client_id                NUMBER(19,0),
+
+    status_id                NUMBER(19,0)
+        CONSTRAINT nn_project_status NOT NULL,
+
+    project_code             VARCHAR2(50 CHAR)
+        CONSTRAINT nn_project_code NOT NULL,
+
+    project_name             VARCHAR2(200 CHAR)
+        CONSTRAINT nn_project_name NOT NULL,
+
+    description               VARCHAR2(1000 CHAR),
+
+    start_date                DATE,
+
+    end_date                  DATE,
+
+    active_flag               CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_project_active_flag NOT NULL,
+
+    created_at                TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_project_created_at NOT NULL,
+
+    created_by                VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_project_created_by NOT NULL,
+
+    updated_at                TIMESTAMP,
+
+    updated_by                VARCHAR2(100 CHAR)
+);
+
+CREATE TABLE task (
+    task_id                   NUMBER(19,0)
+        CONSTRAINT pk_task PRIMARY KEY,
+
+    project_id                NUMBER(19,0)
+        CONSTRAINT nn_task_project NOT NULL,
+
+    assigned_to_employee_id   NUMBER(19,0),
+
+    status_id                 NUMBER(19,0)
+        CONSTRAINT nn_task_status NOT NULL,
+
+    priority_id                NUMBER(19,0)
+        CONSTRAINT nn_task_priority NOT NULL,
+
+    task_code                  VARCHAR2(50 CHAR)
+        CONSTRAINT nn_task_code NOT NULL,
+
+    task_name                  VARCHAR2(200 CHAR)
+        CONSTRAINT nn_task_name NOT NULL,
+
+    description                 VARCHAR2(1000 CHAR),
+
+    due_date                    DATE,
+
+    active_flag                 CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_task_active_flag NOT NULL,
+
+    created_at                  TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_task_created_at NOT NULL,
+
+    created_by                  VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_task_created_by NOT NULL,
+
+    updated_at                  TIMESTAMP,
+
+    updated_by                  VARCHAR2(100 CHAR)
+);

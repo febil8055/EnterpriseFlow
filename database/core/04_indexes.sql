@@ -45,3 +45,26 @@ CREATE INDEX ix_user_account_organization
 
 CREATE INDEX ix_user_account_employee
     ON user_account (employee_id);
+
+-- PROJECT FK columns
+CREATE INDEX ix_project_organization
+    ON project (organization_id);
+
+CREATE INDEX ix_project_client
+    ON project (client_id);
+
+CREATE INDEX ix_project_status
+    ON project (status_id);
+
+-- TASK FK columns
+CREATE INDEX ix_task_project
+    ON task (project_id);
+
+CREATE INDEX ix_task_assigned_employee
+    ON task (assigned_to_employee_id);
+
+CREATE INDEX ix_task_status
+    ON task (status_id);
+
+CREATE INDEX ix_task_priority
+    ON task (priority_id);

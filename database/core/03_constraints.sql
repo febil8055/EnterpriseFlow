@@ -202,3 +202,72 @@ ALTER TABLE user_account
 ADD CONSTRAINT fk_user_account_employee
 FOREIGN KEY (employee_id)
 REFERENCES employee (employee_id);
+
+-- PROJECT ----------------------------------------------------------
+
+ALTER TABLE project
+ADD CONSTRAINT uk_project_code
+UNIQUE (project_code);
+
+ALTER TABLE project
+ADD CONSTRAINT ck_project_code
+CHECK (REGEXP_LIKE(project_code, '^[A-Z0-9_]+$'));
+
+ALTER TABLE project
+ADD CONSTRAINT ck_project_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
+ALTER TABLE project
+ADD CONSTRAINT ck_project_dates
+CHECK (end_date IS NULL OR start_date IS NULL OR end_date >= start_date);
+
+ALTER TABLE project
+ADD CONSTRAINT fk_project_organization
+FOREIGN KEY (organization_id)
+REFERENCES organization (organization_id);
+
+-- Deliberately nullable - a project need not be tied to an external client.
+ALTER TABLE project
+ADD CONSTRAINT fk_project_client
+FOREIGN KEY (client_id)
+REFERENCES client (client_id);
+
+ALTER TABLE project
+ADD CONSTRAINT fk_project_status
+FOREIGN KEY (status_id)
+REFERENCES status (status_id);
+
+-- TASK ---------------------------------------------------------------
+
+ALTER TABLE task
+ADD CONSTRAINT uk_task_code
+UNIQUE (task_code);
+
+ALTER TABLE task
+ADD CONSTRAINT ck_task_code
+CHECK (REGEXP_LIKE(task_code, '^[A-Z0-9_]+$'));
+
+ALTER TABLE task
+ADD CONSTRAINT ck_task_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
+ALTER TABLE task
+ADD CONSTRAINT fk_task_project
+FOREIGN KEY (project_id)
+REFERENCES project (project_id);
+
+-- Deliberately nullable - a task can be unassigned.
+ALTER TABLE task
+ADD CONSTRAINT fk_task_assigned_employee
+FOREIGN KEY (assigned_to_employee_id)
+REFERENCES employee (employee_id);
+
+ALTER TABLE task
+ADD CONSTRAINT fk_task_status
+FOREIGN KEY (status_id)
+REFERENCES status (status_id);
+
+ALTER TABLE task
+ADD CONSTRAINT fk_task_priority
+FOREIGN KEY (priority_id)
+REFERENCES priority (priority_id);
