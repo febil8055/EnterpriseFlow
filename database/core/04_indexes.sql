@@ -21,6 +21,14 @@ CREATE INDEX ix_department_organization
 CREATE INDEX ix_role_department
     ON role (department_id);
 
+-- CLIENT.organization_id (FK -> organization)
+CREATE INDEX ix_client_organization
+    ON client (organization_id);
+
+-- LOCATION.organization_id (FK -> organization)
+CREATE INDEX ix_location_organization
+    ON location (organization_id);
+
 -- EMPLOYEE FK columns
 CREATE INDEX ix_employee_organization
     ON employee (organization_id);

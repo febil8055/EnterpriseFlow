@@ -122,6 +122,50 @@ BEGIN
 END;
 /
 
+CREATE OR REPLACE TRIGGER trg_client_bi
+BEFORE INSERT ON client
+FOR EACH ROW
+BEGIN
+    IF :NEW.client_id IS NULL THEN
+        :NEW.client_id := seq_client.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_client_bu
+BEFORE UPDATE ON client
+FOR EACH ROW
+BEGIN
+    :NEW.updated_at := SYSTIMESTAMP;
+    :NEW.updated_by := USER;
+
+    :NEW.created_at := :OLD.created_at;
+    :NEW.created_by := :OLD.created_by;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_location_bi
+BEFORE INSERT ON location
+FOR EACH ROW
+BEGIN
+    IF :NEW.location_id IS NULL THEN
+        :NEW.location_id := seq_location.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_location_bu
+BEFORE UPDATE ON location
+FOR EACH ROW
+BEGIN
+    :NEW.updated_at := SYSTIMESTAMP;
+    :NEW.updated_by := USER;
+
+    :NEW.created_at := :OLD.created_at;
+    :NEW.created_by := :OLD.created_by;
+END;
+/
+
 CREATE OR REPLACE TRIGGER trg_employee_bi
 BEFORE INSERT ON employee
 FOR EACH ROW

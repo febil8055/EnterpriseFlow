@@ -96,6 +96,44 @@ ALTER TABLE priority
 ADD CONSTRAINT ck_priority_active_flag
 CHECK (active_flag IN ('Y', 'N'));
 
+-- CLIENT -------------------------------------------------------
+
+ALTER TABLE client
+ADD CONSTRAINT uk_client_code
+UNIQUE (client_code);
+
+ALTER TABLE client
+ADD CONSTRAINT ck_client_code
+CHECK (REGEXP_LIKE(client_code, '^[A-Z0-9_]+$'));
+
+ALTER TABLE client
+ADD CONSTRAINT ck_client_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
+ALTER TABLE client
+ADD CONSTRAINT fk_client_organization
+FOREIGN KEY (organization_id)
+REFERENCES organization (organization_id);
+
+-- LOCATION -------------------------------------------------------
+
+ALTER TABLE location
+ADD CONSTRAINT uk_location_code
+UNIQUE (location_code);
+
+ALTER TABLE location
+ADD CONSTRAINT ck_location_code
+CHECK (REGEXP_LIKE(location_code, '^[A-Z0-9_]+$'));
+
+ALTER TABLE location
+ADD CONSTRAINT ck_location_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
+ALTER TABLE location
+ADD CONSTRAINT fk_location_organization
+FOREIGN KEY (organization_id)
+REFERENCES organization (organization_id);
+
 -- EMPLOYEE -----------------------------------------------------
 
 ALTER TABLE employee

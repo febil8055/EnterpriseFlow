@@ -185,6 +185,82 @@ CREATE TABLE priority (
     updated_by             VARCHAR2(100 CHAR)
 );
 
+CREATE TABLE client (
+    client_id              NUMBER(19,0)
+        CONSTRAINT pk_client PRIMARY KEY,
+
+    organization_id        NUMBER(19,0)
+        CONSTRAINT nn_client_organization NOT NULL,
+
+    client_code            VARCHAR2(50 CHAR)
+        CONSTRAINT nn_client_code NOT NULL,
+
+    client_name            VARCHAR2(200 CHAR)
+        CONSTRAINT nn_client_name NOT NULL,
+
+    email                  VARCHAR2(255 CHAR),
+
+    phone                  VARCHAR2(30 CHAR),
+
+    active_flag            CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_client_active_flag NOT NULL,
+
+    created_at             TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_client_created_at NOT NULL,
+
+    created_by             VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_client_created_by NOT NULL,
+
+    updated_at             TIMESTAMP,
+
+    updated_by             VARCHAR2(100 CHAR)
+);
+
+CREATE TABLE location (
+    location_id            NUMBER(19,0)
+        CONSTRAINT pk_location PRIMARY KEY,
+
+    organization_id        NUMBER(19,0)
+        CONSTRAINT nn_location_organization NOT NULL,
+
+    location_code          VARCHAR2(50 CHAR)
+        CONSTRAINT nn_location_code NOT NULL,
+
+    location_name          VARCHAR2(200 CHAR)
+        CONSTRAINT nn_location_name NOT NULL,
+
+    address_line1          VARCHAR2(200 CHAR),
+
+    address_line2          VARCHAR2(200 CHAR),
+
+    city                   VARCHAR2(100 CHAR),
+
+    state_province         VARCHAR2(100 CHAR),
+
+    postal_code            VARCHAR2(20 CHAR),
+
+    country                VARCHAR2(100 CHAR),
+
+    active_flag            CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_location_active_flag NOT NULL,
+
+    created_at             TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_location_created_at NOT NULL,
+
+    created_by             VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_location_created_by NOT NULL,
+
+    updated_at             TIMESTAMP,
+
+    updated_by             VARCHAR2(100 CHAR)
+);
+
 CREATE TABLE employee (
     employee_id           NUMBER(19,0)
         CONSTRAINT pk_employee PRIMARY KEY,

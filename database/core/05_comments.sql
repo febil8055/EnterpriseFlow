@@ -172,6 +172,90 @@ COMMENT ON COLUMN priority.updated_at IS
 COMMENT ON COLUMN priority.updated_by IS
     'User/identity that made the most recent update.';
 
+COMMENT ON TABLE client IS
+    'Customer of an ORGANIZATION - the party PROJECTs are delivered for.';
+
+COMMENT ON COLUMN client.client_id IS
+    'Surrogate primary key, populated from SEQ_CLIENT by TRG_CLIENT_BI.';
+
+COMMENT ON COLUMN client.organization_id IS
+    'Owning organization (the tenant this client belongs to). References ORGANIZATION(organization_id).';
+
+COMMENT ON COLUMN client.client_code IS
+    'Short, unique, uppercase system identifier for the client.';
+
+COMMENT ON COLUMN client.client_name IS
+    'Display name of the client.';
+
+COMMENT ON COLUMN client.email IS
+    'Primary contact email for the client.';
+
+COMMENT ON COLUMN client.phone IS
+    'Primary contact phone number for the client.';
+
+COMMENT ON COLUMN client.active_flag IS
+    'Y = client is active/enabled, N = soft-deleted or disabled.';
+
+COMMENT ON COLUMN client.created_at IS
+    'Timestamp the row was inserted, set once by TRG_CLIENT_BI. Never updated.';
+
+COMMENT ON COLUMN client.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN client.updated_at IS
+    'Timestamp of the most recent update, set by TRG_CLIENT_BU. NULL until first update.';
+
+COMMENT ON COLUMN client.updated_by IS
+    'User/identity that made the most recent update.';
+
+COMMENT ON TABLE location IS
+    'Physical site/address belonging to an ORGANIZATION (e.g. office, branch, warehouse).';
+
+COMMENT ON COLUMN location.location_id IS
+    'Surrogate primary key, populated from SEQ_LOCATION by TRG_LOCATION_BI.';
+
+COMMENT ON COLUMN location.organization_id IS
+    'Owning organization. References ORGANIZATION(organization_id).';
+
+COMMENT ON COLUMN location.location_code IS
+    'Short, unique, uppercase system identifier for the location.';
+
+COMMENT ON COLUMN location.location_name IS
+    'Display name of the location.';
+
+COMMENT ON COLUMN location.address_line1 IS
+    'Street address, line 1.';
+
+COMMENT ON COLUMN location.address_line2 IS
+    'Street address, line 2 (suite/unit/floor).';
+
+COMMENT ON COLUMN location.city IS
+    'City.';
+
+COMMENT ON COLUMN location.state_province IS
+    'State or province.';
+
+COMMENT ON COLUMN location.postal_code IS
+    'Postal/ZIP code.';
+
+COMMENT ON COLUMN location.country IS
+    'Country.';
+
+COMMENT ON COLUMN location.active_flag IS
+    'Y = location is active/enabled, N = soft-deleted or disabled.';
+
+COMMENT ON COLUMN location.created_at IS
+    'Timestamp the row was inserted, set once by TRG_LOCATION_BI. Never updated.';
+
+COMMENT ON COLUMN location.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN location.updated_at IS
+    'Timestamp of the most recent update, set by TRG_LOCATION_BU. NULL until first update.';
+
+COMMENT ON COLUMN location.updated_by IS
+    'User/identity that made the most recent update.';
+
 COMMENT ON TABLE employee IS
     'Person employed by an ORGANIZATION, assigned to one DEPARTMENT and one ROLE.';
 
