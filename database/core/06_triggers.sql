@@ -55,3 +55,25 @@ BEGIN
     :NEW.created_by := :OLD.created_by;
 END;
 /
+
+CREATE OR REPLACE TRIGGER trg_role_bi
+BEFORE INSERT ON role
+FOR EACH ROW
+BEGIN
+    IF :NEW.role_id IS NULL THEN
+        :NEW.role_id := seq_role.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_role_bu
+BEFORE UPDATE ON role
+FOR EACH ROW
+BEGIN
+    :NEW.updated_at := SYSTIMESTAMP;
+    :NEW.updated_by := USER;
+
+    :NEW.created_at := :OLD.created_at;
+    :NEW.created_by := :OLD.created_by;
+END;
+/

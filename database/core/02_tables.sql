@@ -81,3 +81,35 @@ CREATE TABLE department (
 
     updated_by           VARCHAR2(100 CHAR)
 );
+
+CREATE TABLE role (
+    role_id               NUMBER(19,0)
+        CONSTRAINT pk_role PRIMARY KEY,
+
+    department_id         NUMBER(19,0)
+        CONSTRAINT nn_role_department NOT NULL,
+
+    role_name             VARCHAR2(100 CHAR)
+        CONSTRAINT nn_role_name NOT NULL,
+
+    role_code              VARCHAR2(50 CHAR)
+        CONSTRAINT nn_role_code NOT NULL,
+
+    description            VARCHAR2(500 CHAR),
+
+    active_flag             CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_role_active_flag NOT NULL,
+
+    created_at             TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_role_created_at NOT NULL,
+
+    created_by             VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_role_created_by NOT NULL,
+
+    updated_at             TIMESTAMP,
+
+    updated_by             VARCHAR2(100 CHAR)
+);

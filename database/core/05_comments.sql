@@ -73,3 +73,36 @@ COMMENT ON COLUMN department.updated_at IS
 
 COMMENT ON COLUMN department.updated_by IS
     'User/identity that made the most recent update.';
+
+COMMENT ON TABLE role IS
+    'Job role/title scoped to a single DEPARTMENT, assignable to employees.';
+
+COMMENT ON COLUMN role.role_id IS
+    'Surrogate primary key, populated from SEQ_ROLE by TRG_ROLE_BI.';
+
+COMMENT ON COLUMN role.department_id IS
+    'Owning department. References DEPARTMENT(department_id).';
+
+COMMENT ON COLUMN role.role_name IS
+    'Display name of the role.';
+
+COMMENT ON COLUMN role.role_code IS
+    'Short, unique, uppercase system identifier for the role.';
+
+COMMENT ON COLUMN role.description IS
+    'Free-text description of the role''s responsibilities.';
+
+COMMENT ON COLUMN role.active_flag IS
+    'Y = role is active/enabled, N = soft-deleted or disabled.';
+
+COMMENT ON COLUMN role.created_at IS
+    'Timestamp the row was inserted, set once by TRG_ROLE_BI. Never updated.';
+
+COMMENT ON COLUMN role.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN role.updated_at IS
+    'Timestamp of the most recent update, set by TRG_ROLE_BU. NULL until first update.';
+
+COMMENT ON COLUMN role.updated_by IS
+    'User/identity that made the most recent update.';

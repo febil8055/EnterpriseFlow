@@ -16,3 +16,7 @@
 -- DEPARTMENT.organization_id (FK -> organization)
 CREATE INDEX ix_department_organization
     ON department (organization_id);
+
+-- ROLE.department_id (FK -> department)
+CREATE INDEX ix_role_department
+    ON role (department_id);

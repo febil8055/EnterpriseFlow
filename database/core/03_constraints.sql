@@ -46,3 +46,22 @@ ALTER TABLE department
 ADD CONSTRAINT fk_department_organization
 FOREIGN KEY (organization_id)
 REFERENCES organization (organization_id);
+
+-- ROLE -------------------------------------------------------------
+
+ALTER TABLE role
+ADD CONSTRAINT uk_role_code
+UNIQUE (role_code);
+
+ALTER TABLE role
+ADD CONSTRAINT ck_role_code
+CHECK (REGEXP_LIKE(role_code, '^[A-Z0-9_]+$'));
+
+ALTER TABLE role
+ADD CONSTRAINT ck_role_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
+ALTER TABLE role
+ADD CONSTRAINT fk_role_department
+FOREIGN KEY (department_id)
+REFERENCES department (department_id);
