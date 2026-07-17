@@ -20,3 +20,13 @@ CREATE INDEX ix_department_organization
 -- ROLE.department_id (FK -> department)
 CREATE INDEX ix_role_department
     ON role (department_id);
+
+-- EMPLOYEE FK columns
+CREATE INDEX ix_employee_organization
+    ON employee (organization_id);
+
+CREATE INDEX ix_employee_department
+    ON employee (department_id);
+
+CREATE INDEX ix_employee_role
+    ON employee (role_id);

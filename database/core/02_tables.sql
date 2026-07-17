@@ -113,3 +113,51 @@ CREATE TABLE role (
 
     updated_by             VARCHAR2(100 CHAR)
 );
+
+CREATE TABLE employee (
+    employee_id           NUMBER(19,0)
+        CONSTRAINT pk_employee PRIMARY KEY,
+
+    organization_id       NUMBER(19,0)
+        CONSTRAINT nn_employee_organization NOT NULL,
+
+    department_id         NUMBER(19,0)
+        CONSTRAINT nn_employee_department NOT NULL,
+
+    role_id               NUMBER(19,0)
+        CONSTRAINT nn_employee_role NOT NULL,
+
+    employee_code         VARCHAR2(50 CHAR)
+        CONSTRAINT nn_employee_code NOT NULL,
+
+    first_name            VARCHAR2(100 CHAR)
+        CONSTRAINT nn_employee_first_name NOT NULL,
+
+    last_name             VARCHAR2(100 CHAR)
+        CONSTRAINT nn_employee_last_name NOT NULL,
+
+    email                 VARCHAR2(255 CHAR)
+        CONSTRAINT nn_employee_email NOT NULL,
+
+    phone                 VARCHAR2(30 CHAR),
+
+    hire_date             DATE
+        DEFAULT SYSDATE
+        CONSTRAINT nn_employee_hire_date NOT NULL,
+
+    active_flag           CHAR(1)
+        DEFAULT 'Y'
+        CONSTRAINT nn_employee_active_flag NOT NULL,
+
+    created_at            TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_employee_created_at NOT NULL,
+
+    created_by             VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_employee_created_by NOT NULL,
+
+    updated_at             TIMESTAMP,
+
+    updated_by             VARCHAR2(100 CHAR)
+);

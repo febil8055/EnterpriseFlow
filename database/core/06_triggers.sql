@@ -77,3 +77,25 @@ BEGIN
     :NEW.created_by := :OLD.created_by;
 END;
 /
+
+CREATE OR REPLACE TRIGGER trg_employee_bi
+BEFORE INSERT ON employee
+FOR EACH ROW
+BEGIN
+    IF :NEW.employee_id IS NULL THEN
+        :NEW.employee_id := seq_employee.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_employee_bu
+BEFORE UPDATE ON employee
+FOR EACH ROW
+BEGIN
+    :NEW.updated_at := SYSTIMESTAMP;
+    :NEW.updated_by := USER;
+
+    :NEW.created_at := :OLD.created_at;
+    :NEW.created_by := :OLD.created_by;
+END;
+/

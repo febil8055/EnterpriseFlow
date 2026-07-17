@@ -106,3 +106,51 @@ COMMENT ON COLUMN role.updated_at IS
 
 COMMENT ON COLUMN role.updated_by IS
     'User/identity that made the most recent update.';
+
+COMMENT ON TABLE employee IS
+    'Person employed by an ORGANIZATION, assigned to one DEPARTMENT and one ROLE.';
+
+COMMENT ON COLUMN employee.employee_id IS
+    'Surrogate primary key, populated from SEQ_EMPLOYEE by TRG_EMPLOYEE_BI.';
+
+COMMENT ON COLUMN employee.organization_id IS
+    'Owning organization. References ORGANIZATION(organization_id).';
+
+COMMENT ON COLUMN employee.department_id IS
+    'Assigned department. References DEPARTMENT(department_id).';
+
+COMMENT ON COLUMN employee.role_id IS
+    'Assigned role. References ROLE(role_id).';
+
+COMMENT ON COLUMN employee.employee_code IS
+    'Short, unique, uppercase system identifier for the employee (e.g. badge/payroll number).';
+
+COMMENT ON COLUMN employee.first_name IS
+    'Employee first name.';
+
+COMMENT ON COLUMN employee.last_name IS
+    'Employee last name.';
+
+COMMENT ON COLUMN employee.email IS
+    'Unique work email address, used for login/notifications.';
+
+COMMENT ON COLUMN employee.phone IS
+    'Contact phone number.';
+
+COMMENT ON COLUMN employee.hire_date IS
+    'Date the employee was hired.';
+
+COMMENT ON COLUMN employee.active_flag IS
+    'Y = employee is active/enabled, N = soft-deleted or disabled (e.g. terminated).';
+
+COMMENT ON COLUMN employee.created_at IS
+    'Timestamp the row was inserted, set once by TRG_EMPLOYEE_BI. Never updated.';
+
+COMMENT ON COLUMN employee.created_by IS
+    'User/identity that inserted the row.';
+
+COMMENT ON COLUMN employee.updated_at IS
+    'Timestamp of the most recent update, set by TRG_EMPLOYEE_BU. NULL until first update.';
+
+COMMENT ON COLUMN employee.updated_by IS
+    'User/identity that made the most recent update.';

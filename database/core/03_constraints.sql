@@ -65,3 +65,43 @@ ALTER TABLE role
 ADD CONSTRAINT fk_role_department
 FOREIGN KEY (department_id)
 REFERENCES department (department_id);
+
+-- EMPLOYEE -----------------------------------------------------
+
+ALTER TABLE employee
+ADD CONSTRAINT uk_employee_code
+UNIQUE (employee_code);
+
+ALTER TABLE employee
+ADD CONSTRAINT uk_employee_email
+UNIQUE (email);
+
+ALTER TABLE employee
+ADD CONSTRAINT ck_employee_code
+CHECK (REGEXP_LIKE(employee_code, '^[A-Z0-9_]+$'));
+
+-- Basic shape check, not full RFC 5322 validation - that belongs in
+-- the application layer. This just catches obviously malformed data
+-- entered directly against the database.
+ALTER TABLE employee
+ADD CONSTRAINT ck_employee_email
+CHECK (REGEXP_LIKE(email, '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'));
+
+ALTER TABLE employee
+ADD CONSTRAINT ck_employee_active_flag
+CHECK (active_flag IN ('Y', 'N'));
+
+ALTER TABLE employee
+ADD CONSTRAINT fk_employee_organization
+FOREIGN KEY (organization_id)
+REFERENCES organization (organization_id);
+
+ALTER TABLE employee
+ADD CONSTRAINT fk_employee_department
+FOREIGN KEY (department_id)
+REFERENCES department (department_id);
+
+ALTER TABLE employee
+ADD CONSTRAINT fk_employee_role
+FOREIGN KEY (role_id)
+REFERENCES role (role_id);
