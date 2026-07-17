@@ -9,8 +9,7 @@
 -- ============================================================
 
 COMMENT ON TABLE organization IS
-    'Top-level tenant entity. Every other business table in the schema '
-    'traces back to an ORGANIZATION, directly or through a parent table.';
+    'Top-level tenant entity. Every other business table in the schema traces back to an ORGANIZATION, directly or through a parent table.';
 
 COMMENT ON COLUMN organization.organization_id IS
     'Surrogate primary key, populated from SEQ_ORGANIZATION by TRG_ORGANIZATION_BI.';
@@ -19,8 +18,7 @@ COMMENT ON COLUMN organization.organization_name IS
     'Display name of the organization.';
 
 COMMENT ON COLUMN organization.organization_code IS
-    'Short, unique, uppercase system identifier (e.g. used in URLs/APIs). '
-    'Not intended to change once assigned.';
+    'Short, unique, uppercase system identifier (e.g. used in URLs/APIs). Not intended to change once assigned.';
 
 COMMENT ON COLUMN organization.email IS
     'Primary contact email for the organization.';
@@ -29,8 +27,7 @@ COMMENT ON COLUMN organization.phone IS
     'Primary contact phone number for the organization.';
 
 COMMENT ON COLUMN organization.active_flag IS
-    'Y = organization is active/enabled, N = soft-deleted or disabled. '
-    'Application queries should filter on this by default.';
+    'Y = organization is active/enabled, N = soft-deleted or disabled. Application queries should filter on this by default.';
 
 COMMENT ON COLUMN organization.created_at IS
     'Timestamp the row was inserted, set once by TRG_ORGANIZATION_BI. Never updated.';
@@ -108,8 +105,7 @@ COMMENT ON COLUMN role.updated_by IS
     'User/identity that made the most recent update.';
 
 COMMENT ON TABLE status IS
-    'Shared lookup of lifecycle states, scoped per owning entity via ENTITY_TYPE '
-    '(e.g. PROJECT, TASK). Referenced by PROJECT.status_id and TASK.status_id.';
+    'Shared lookup of lifecycle states, scoped per owning entity via ENTITY_TYPE (e.g. PROJECT, TASK). Referenced by PROJECT.status_id and TASK.status_id.';
 
 COMMENT ON COLUMN status.status_id IS
     'Surrogate primary key, populated from SEQ_STATUS by TRG_STATUS_BI.';
@@ -142,8 +138,7 @@ COMMENT ON COLUMN status.updated_by IS
     'User/identity that made the most recent update.';
 
 COMMENT ON TABLE priority IS
-    'Shared lookup of priority levels (e.g. Low/Medium/High), reused across entities '
-    'that need one. Referenced by TASK.priority_id.';
+    'Shared lookup of priority levels (e.g. Low/Medium/High), reused across entities that need one. Referenced by TASK.priority_id.';
 
 COMMENT ON COLUMN priority.priority_id IS
     'Surrogate primary key, populated from SEQ_PRIORITY by TRG_PRIORITY_BI.';
@@ -305,9 +300,7 @@ COMMENT ON COLUMN employee.updated_by IS
     'User/identity that made the most recent update.';
 
 COMMENT ON TABLE user_account IS
-    'Login/security identity, scoped to an ORGANIZATION. Deliberately separate '
-    'from EMPLOYEE - not every login is an employee (contractor, client portal '
-    'user, service account) and not every employee has a login.';
+    'Login/security identity, scoped to an ORGANIZATION. Deliberately separate from EMPLOYEE - not every login is an employee (contractor, client portal user, service account) and not every employee has a login.';
 
 COMMENT ON COLUMN user_account.user_account_id IS
     'Surrogate primary key, populated from SEQ_USER_ACCOUNT by TRG_USER_ACCOUNT_BI.';
@@ -361,8 +354,7 @@ COMMENT ON COLUMN project.client_id IS
     'Optional client this project is delivered for. References CLIENT(client_id). NULL for internal projects.';
 
 COMMENT ON COLUMN project.status_id IS
-    'Current lifecycle status. References STATUS(status_id) where STATUS.entity_type = ''PROJECT'', '
-    'enforced by TRG_PROJECT_BI/BU rather than a declarative constraint.';
+    'Current lifecycle status. References STATUS(status_id) where STATUS.entity_type = ''PROJECT'', enforced by TRG_PROJECT_BI/BU rather than a declarative constraint.';
 
 COMMENT ON COLUMN project.project_code IS
     'Short, unique, uppercase system identifier for the project.';
@@ -407,8 +399,7 @@ COMMENT ON COLUMN task.assigned_to_employee_id IS
     'Employee currently assigned to this task. References EMPLOYEE(employee_id). NULL if unassigned.';
 
 COMMENT ON COLUMN task.status_id IS
-    'Current lifecycle status. References STATUS(status_id) where STATUS.entity_type = ''TASK'', '
-    'enforced by TRG_TASK_BI/BU rather than a declarative constraint.';
+    'Current lifecycle status. References STATUS(status_id) where STATUS.entity_type = ''TASK'', enforced by TRG_TASK_BI/BU rather than a declarative constraint.';
 
 COMMENT ON COLUMN task.priority_id IS
     'Priority level. References PRIORITY(priority_id).';
