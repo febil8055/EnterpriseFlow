@@ -1,0 +1,6 @@
+CREATE SEQUENCE seq_organization
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+    
