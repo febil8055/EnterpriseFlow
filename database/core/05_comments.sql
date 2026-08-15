@@ -430,3 +430,30 @@ COMMENT ON COLUMN task.updated_at IS
 
 COMMENT ON COLUMN task.updated_by IS
     'User/identity that made the most recent update.';
+
+COMMENT ON TABLE audit_log IS
+    'Append-only change history written by TRG_<TABLE>_AU triggers on ORGANIZATION, DEPARTMENT, EMPLOYEE, PROJECT, and TASK. Satisfies BR-009: every important action must be recorded in the audit log.';
+
+COMMENT ON COLUMN audit_log.audit_log_id IS
+    'Surrogate primary key, populated from SEQ_AUDIT_LOG.';
+
+COMMENT ON COLUMN audit_log.table_name IS
+    'Name of the audited table, upper case (e.g. TASK).';
+
+COMMENT ON COLUMN audit_log.record_id IS
+    'Primary key value of the audited row in TABLE_NAME.';
+
+COMMENT ON COLUMN audit_log.action IS
+    'INSERT, UPDATE, or DELETE - see CK_AUDIT_LOG_ACTION.';
+
+COMMENT ON COLUMN audit_log.old_values IS
+    'JSON snapshot of the row before the change. NULL for INSERT.';
+
+COMMENT ON COLUMN audit_log.new_values IS
+    'JSON snapshot of the row after the change. NULL for DELETE.';
+
+COMMENT ON COLUMN audit_log.changed_at IS
+    'Timestamp the change was recorded, set by the TRG_<TABLE>_AU trigger.';
+
+COMMENT ON COLUMN audit_log.changed_by IS
+    'APEX application user (SYS_CONTEXT(''APEX$SESSION'',''APP_USER'')) if the change came through the app, otherwise the database session USER.';

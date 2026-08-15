@@ -73,3 +73,12 @@ CREATE SEQUENCE seq_task
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
+
+-- AUDIT_LOG is a high-frequency event log, not master data - CACHE
+-- trades a small, acceptable gap-on-crash risk for reduced sequence
+-- contention, unlike every other NOCACHE sequence in this module.
+CREATE SEQUENCE seq_audit_log
+    START WITH 1
+    INCREMENT BY 1
+    CACHE 1000
+    NOCYCLE;

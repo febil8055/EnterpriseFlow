@@ -448,3 +448,35 @@ CREATE TABLE task (
 
     updated_by                  VARCHAR2(100 CHAR)
 );
+
+-- AUDIT_LOG records INSERT/UPDATE/DELETE activity on key business
+-- tables (see 06_triggers.sql for TRG_<TABLE>_AU). It intentionally
+-- does NOT carry the standard audit columns (created_at/created_by/
+-- updated_at/updated_by/active_flag) from the naming standard - a log
+-- row is itself an audit record, is never updated or soft-deleted,
+-- and changed_at/changed_by already capture who/when for the row.
+CREATE TABLE audit_log (
+    audit_log_id      NUMBER(19,0)
+        CONSTRAINT pk_audit_log PRIMARY KEY,
+
+    table_name         VARCHAR2(128 CHAR)
+        CONSTRAINT nn_audit_log_table_name NOT NULL,
+
+    record_id          NUMBER(19,0)
+        CONSTRAINT nn_audit_log_record_id NOT NULL,
+
+    action              VARCHAR2(10 CHAR)
+        CONSTRAINT nn_audit_log_action NOT NULL,
+
+    old_values           CLOB,
+
+    new_values           CLOB,
+
+    changed_at            TIMESTAMP
+        DEFAULT SYSTIMESTAMP
+        CONSTRAINT nn_audit_log_changed_at NOT NULL,
+
+    changed_by            VARCHAR2(100 CHAR)
+        DEFAULT USER
+        CONSTRAINT nn_audit_log_changed_by NOT NULL
+);

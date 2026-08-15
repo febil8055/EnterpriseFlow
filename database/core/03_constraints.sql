@@ -271,3 +271,9 @@ ALTER TABLE task
 ADD CONSTRAINT fk_task_priority
 FOREIGN KEY (priority_id)
 REFERENCES priority (priority_id);
+
+-- AUDIT_LOG ---------------------------------------------------------
+
+ALTER TABLE audit_log
+ADD CONSTRAINT ck_audit_log_action
+CHECK (action IN ('INSERT', 'UPDATE', 'DELETE'));

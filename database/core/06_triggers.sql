@@ -315,3 +315,336 @@ EXCEPTION
         RAISE_APPLICATION_ERROR(-20004, 'TASK.status_id does not reference an existing STATUS row.');
 END;
 /
+
+-- ============================================================
+-- Audit triggers (BR-009: every important action must be recorded
+-- in the audit log)
+--
+-- Naming convention: TRG_<TABLE>_AU (after, for audit)
+--
+-- AU trigger: fires AFTER INSERT/UPDATE/DELETE, writes one AUDIT_LOG
+--             row per change with a JSON snapshot of the business
+--             columns (not the audit columns themselves - those are
+--             redundant with CHANGED_AT/CHANGED_BY). Runs in the same
+--             transaction as the change, deliberately not autonomous,
+--             so a rolled-back change never leaves a phantom log row.
+-- ============================================================
+
+CREATE OR REPLACE TRIGGER trg_organization_au
+AFTER INSERT OR UPDATE OR DELETE ON organization
+FOR EACH ROW
+DECLARE
+    v_action     VARCHAR2(10);
+    v_record_id  NUMBER(19,0);
+    v_old_values CLOB;
+    v_new_values CLOB;
+BEGIN
+    IF INSERTING THEN
+        v_action     := 'INSERT';
+        v_record_id  := :NEW.organization_id;
+        v_new_values := JSON_OBJECT(
+            'organization_name' VALUE :NEW.organization_name,
+            'organization_code' VALUE :NEW.organization_code,
+            'email'             VALUE :NEW.email,
+            'phone'             VALUE :NEW.phone,
+            'active_flag'       VALUE :NEW.active_flag
+        );
+    ELSIF UPDATING THEN
+        v_action     := 'UPDATE';
+        v_record_id  := :NEW.organization_id;
+        v_old_values := JSON_OBJECT(
+            'organization_name' VALUE :OLD.organization_name,
+            'organization_code' VALUE :OLD.organization_code,
+            'email'             VALUE :OLD.email,
+            'phone'             VALUE :OLD.phone,
+            'active_flag'       VALUE :OLD.active_flag
+        );
+        v_new_values := JSON_OBJECT(
+            'organization_name' VALUE :NEW.organization_name,
+            'organization_code' VALUE :NEW.organization_code,
+            'email'             VALUE :NEW.email,
+            'phone'             VALUE :NEW.phone,
+            'active_flag'       VALUE :NEW.active_flag
+        );
+    ELSE
+        v_action     := 'DELETE';
+        v_record_id  := :OLD.organization_id;
+        v_old_values := JSON_OBJECT(
+            'organization_name' VALUE :OLD.organization_name,
+            'organization_code' VALUE :OLD.organization_code,
+            'email'             VALUE :OLD.email,
+            'phone'             VALUE :OLD.phone,
+            'active_flag'       VALUE :OLD.active_flag
+        );
+    END IF;
+
+    INSERT INTO audit_log (
+        audit_log_id, table_name, record_id, action,
+        old_values, new_values, changed_at, changed_by
+    ) VALUES (
+        seq_audit_log.NEXTVAL, 'ORGANIZATION', v_record_id, v_action,
+        v_old_values, v_new_values, SYSTIMESTAMP,
+        NVL(SYS_CONTEXT('APEX$SESSION', 'APP_USER'), USER)
+    );
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_department_au
+AFTER INSERT OR UPDATE OR DELETE ON department
+FOR EACH ROW
+DECLARE
+    v_action     VARCHAR2(10);
+    v_record_id  NUMBER(19,0);
+    v_old_values CLOB;
+    v_new_values CLOB;
+BEGIN
+    IF INSERTING THEN
+        v_action     := 'INSERT';
+        v_record_id  := :NEW.department_id;
+        v_new_values := JSON_OBJECT(
+            'department_name' VALUE :NEW.department_name,
+            'department_code' VALUE :NEW.department_code,
+            'organization_id' VALUE :NEW.organization_id,
+            'active_flag'     VALUE :NEW.active_flag
+        );
+    ELSIF UPDATING THEN
+        v_action     := 'UPDATE';
+        v_record_id  := :NEW.department_id;
+        v_old_values := JSON_OBJECT(
+            'department_name' VALUE :OLD.department_name,
+            'department_code' VALUE :OLD.department_code,
+            'organization_id' VALUE :OLD.organization_id,
+            'active_flag'     VALUE :OLD.active_flag
+        );
+        v_new_values := JSON_OBJECT(
+            'department_name' VALUE :NEW.department_name,
+            'department_code' VALUE :NEW.department_code,
+            'organization_id' VALUE :NEW.organization_id,
+            'active_flag'     VALUE :NEW.active_flag
+        );
+    ELSE
+        v_action     := 'DELETE';
+        v_record_id  := :OLD.department_id;
+        v_old_values := JSON_OBJECT(
+            'department_name' VALUE :OLD.department_name,
+            'department_code' VALUE :OLD.department_code,
+            'organization_id' VALUE :OLD.organization_id,
+            'active_flag'     VALUE :OLD.active_flag
+        );
+    END IF;
+
+    INSERT INTO audit_log (
+        audit_log_id, table_name, record_id, action,
+        old_values, new_values, changed_at, changed_by
+    ) VALUES (
+        seq_audit_log.NEXTVAL, 'DEPARTMENT', v_record_id, v_action,
+        v_old_values, v_new_values, SYSTIMESTAMP,
+        NVL(SYS_CONTEXT('APEX$SESSION', 'APP_USER'), USER)
+    );
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_employee_au
+AFTER INSERT OR UPDATE OR DELETE ON employee
+FOR EACH ROW
+DECLARE
+    v_action     VARCHAR2(10);
+    v_record_id  NUMBER(19,0);
+    v_old_values CLOB;
+    v_new_values CLOB;
+BEGIN
+    IF INSERTING THEN
+        v_action     := 'INSERT';
+        v_record_id  := :NEW.employee_id;
+        v_new_values := JSON_OBJECT(
+            'first_name'    VALUE :NEW.first_name,
+            'last_name'     VALUE :NEW.last_name,
+            'email'         VALUE :NEW.email,
+            'department_id' VALUE :NEW.department_id,
+            'role_id'       VALUE :NEW.role_id,
+            'active_flag'   VALUE :NEW.active_flag
+        );
+    ELSIF UPDATING THEN
+        v_action     := 'UPDATE';
+        v_record_id  := :NEW.employee_id;
+        v_old_values := JSON_OBJECT(
+            'first_name'    VALUE :OLD.first_name,
+            'last_name'     VALUE :OLD.last_name,
+            'email'         VALUE :OLD.email,
+            'department_id' VALUE :OLD.department_id,
+            'role_id'       VALUE :OLD.role_id,
+            'active_flag'   VALUE :OLD.active_flag
+        );
+        v_new_values := JSON_OBJECT(
+            'first_name'    VALUE :NEW.first_name,
+            'last_name'     VALUE :NEW.last_name,
+            'email'         VALUE :NEW.email,
+            'department_id' VALUE :NEW.department_id,
+            'role_id'       VALUE :NEW.role_id,
+            'active_flag'   VALUE :NEW.active_flag
+        );
+    ELSE
+        v_action     := 'DELETE';
+        v_record_id  := :OLD.employee_id;
+        v_old_values := JSON_OBJECT(
+            'first_name'    VALUE :OLD.first_name,
+            'last_name'     VALUE :OLD.last_name,
+            'email'         VALUE :OLD.email,
+            'department_id' VALUE :OLD.department_id,
+            'role_id'       VALUE :OLD.role_id,
+            'active_flag'   VALUE :OLD.active_flag
+        );
+    END IF;
+
+    INSERT INTO audit_log (
+        audit_log_id, table_name, record_id, action,
+        old_values, new_values, changed_at, changed_by
+    ) VALUES (
+        seq_audit_log.NEXTVAL, 'EMPLOYEE', v_record_id, v_action,
+        v_old_values, v_new_values, SYSTIMESTAMP,
+        NVL(SYS_CONTEXT('APEX$SESSION', 'APP_USER'), USER)
+    );
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_project_au
+AFTER INSERT OR UPDATE OR DELETE ON project
+FOR EACH ROW
+DECLARE
+    v_action     VARCHAR2(10);
+    v_record_id  NUMBER(19,0);
+    v_old_values CLOB;
+    v_new_values CLOB;
+BEGIN
+    IF INSERTING THEN
+        v_action     := 'INSERT';
+        v_record_id  := :NEW.project_id;
+        v_new_values := JSON_OBJECT(
+            'project_name'    VALUE :NEW.project_name,
+            'project_code'    VALUE :NEW.project_code,
+            'organization_id' VALUE :NEW.organization_id,
+            'client_id'       VALUE :NEW.client_id,
+            'status_id'       VALUE :NEW.status_id,
+            'start_date'      VALUE :NEW.start_date,
+            'end_date'        VALUE :NEW.end_date,
+            'active_flag'     VALUE :NEW.active_flag
+        );
+    ELSIF UPDATING THEN
+        v_action     := 'UPDATE';
+        v_record_id  := :NEW.project_id;
+        v_old_values := JSON_OBJECT(
+            'project_name'    VALUE :OLD.project_name,
+            'project_code'    VALUE :OLD.project_code,
+            'organization_id' VALUE :OLD.organization_id,
+            'client_id'       VALUE :OLD.client_id,
+            'status_id'       VALUE :OLD.status_id,
+            'start_date'      VALUE :OLD.start_date,
+            'end_date'        VALUE :OLD.end_date,
+            'active_flag'     VALUE :OLD.active_flag
+        );
+        v_new_values := JSON_OBJECT(
+            'project_name'    VALUE :NEW.project_name,
+            'project_code'    VALUE :NEW.project_code,
+            'organization_id' VALUE :NEW.organization_id,
+            'client_id'       VALUE :NEW.client_id,
+            'status_id'       VALUE :NEW.status_id,
+            'start_date'      VALUE :NEW.start_date,
+            'end_date'        VALUE :NEW.end_date,
+            'active_flag'     VALUE :NEW.active_flag
+        );
+    ELSE
+        v_action     := 'DELETE';
+        v_record_id  := :OLD.project_id;
+        v_old_values := JSON_OBJECT(
+            'project_name'    VALUE :OLD.project_name,
+            'project_code'    VALUE :OLD.project_code,
+            'organization_id' VALUE :OLD.organization_id,
+            'client_id'       VALUE :OLD.client_id,
+            'status_id'       VALUE :OLD.status_id,
+            'start_date'      VALUE :OLD.start_date,
+            'end_date'        VALUE :OLD.end_date,
+            'active_flag'     VALUE :OLD.active_flag
+        );
+    END IF;
+
+    INSERT INTO audit_log (
+        audit_log_id, table_name, record_id, action,
+        old_values, new_values, changed_at, changed_by
+    ) VALUES (
+        seq_audit_log.NEXTVAL, 'PROJECT', v_record_id, v_action,
+        v_old_values, v_new_values, SYSTIMESTAMP,
+        NVL(SYS_CONTEXT('APEX$SESSION', 'APP_USER'), USER)
+    );
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_task_au
+AFTER INSERT OR UPDATE OR DELETE ON task
+FOR EACH ROW
+DECLARE
+    v_action     VARCHAR2(10);
+    v_record_id  NUMBER(19,0);
+    v_old_values CLOB;
+    v_new_values CLOB;
+BEGIN
+    IF INSERTING THEN
+        v_action     := 'INSERT';
+        v_record_id  := :NEW.task_id;
+        v_new_values := JSON_OBJECT(
+            'task_name'               VALUE :NEW.task_name,
+            'task_code'               VALUE :NEW.task_code,
+            'project_id'              VALUE :NEW.project_id,
+            'assigned_to_employee_id' VALUE :NEW.assigned_to_employee_id,
+            'status_id'               VALUE :NEW.status_id,
+            'priority_id'             VALUE :NEW.priority_id,
+            'due_date'                VALUE :NEW.due_date,
+            'active_flag'             VALUE :NEW.active_flag
+        );
+    ELSIF UPDATING THEN
+        v_action     := 'UPDATE';
+        v_record_id  := :NEW.task_id;
+        v_old_values := JSON_OBJECT(
+            'task_name'               VALUE :OLD.task_name,
+            'task_code'               VALUE :OLD.task_code,
+            'project_id'              VALUE :OLD.project_id,
+            'assigned_to_employee_id' VALUE :OLD.assigned_to_employee_id,
+            'status_id'               VALUE :OLD.status_id,
+            'priority_id'             VALUE :OLD.priority_id,
+            'due_date'                VALUE :OLD.due_date,
+            'active_flag'             VALUE :OLD.active_flag
+        );
+        v_new_values := JSON_OBJECT(
+            'task_name'               VALUE :NEW.task_name,
+            'task_code'               VALUE :NEW.task_code,
+            'project_id'              VALUE :NEW.project_id,
+            'assigned_to_employee_id' VALUE :NEW.assigned_to_employee_id,
+            'status_id'               VALUE :NEW.status_id,
+            'priority_id'             VALUE :NEW.priority_id,
+            'due_date'                VALUE :NEW.due_date,
+            'active_flag'             VALUE :NEW.active_flag
+        );
+    ELSE
+        v_action     := 'DELETE';
+        v_record_id  := :OLD.task_id;
+        v_old_values := JSON_OBJECT(
+            'task_name'               VALUE :OLD.task_name,
+            'task_code'               VALUE :OLD.task_code,
+            'project_id'              VALUE :OLD.project_id,
+            'assigned_to_employee_id' VALUE :OLD.assigned_to_employee_id,
+            'status_id'               VALUE :OLD.status_id,
+            'priority_id'             VALUE :OLD.priority_id,
+            'due_date'                VALUE :OLD.due_date,
+            'active_flag'             VALUE :OLD.active_flag
+        );
+    END IF;
+
+    INSERT INTO audit_log (
+        audit_log_id, table_name, record_id, action,
+        old_values, new_values, changed_at, changed_by
+    ) VALUES (
+        seq_audit_log.NEXTVAL, 'TASK', v_record_id, v_action,
+        v_old_values, v_new_values, SYSTIMESTAMP,
+        NVL(SYS_CONTEXT('APEX$SESSION', 'APP_USER'), USER)
+    );
+END;
+/

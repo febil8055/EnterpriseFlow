@@ -68,3 +68,11 @@ CREATE INDEX ix_task_status
 
 CREATE INDEX ix_task_priority
     ON task (priority_id);
+
+-- AUDIT_LOG is queried two ways: "show history for this record"
+-- (table_name, record_id) and "show recent activity" (changed_at).
+CREATE INDEX ix_audit_log_table_record
+    ON audit_log (table_name, record_id);
+
+CREATE INDEX ix_audit_log_changed_at
+    ON audit_log (changed_at);
