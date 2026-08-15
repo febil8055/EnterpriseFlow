@@ -1,0 +1,582 @@
+:root{
+      --ef-accent:#0071e3;
+        --ef-accent-2:#42a5ff;
+          --ef-ink:#1d1d1f;
+            --ef-muted:#6e6e73;
+              --ef-bg:#f5f5f7;
+                --ef-card:#ffffff;
+                  --ef-border:rgba(0,0,0,.06);
+                    --ef-shadow:0 2px 8px rgba(0,0,0,.04), 0 12px 32px -16px rgba(0,0,0,.12);
+                      --ef-radius:16px;
+                      }
+
+                      body, .t-Body, .t-PageBody{
+                        font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif !important;
+                          background:var(--ef-bg) !important;
+                            color:var(--ef-ink);
+                            }
+
+                            #t_Body_nav, .t-TreeNav{
+                              background:#1d1d1f !important;
+                              }
+                              .t-TreeNav-content{
+                                background:transparent !important;
+                                }
+                                .t-TreeNav .a-TreeView-content{
+                                  border-radius:10px;
+                                    margin:2px 10px;
+                                      transition:background .15s ease;
+                                      }
+                                      .t-TreeNav .a-TreeView-node.is-selected > .a-TreeView-content{
+                                        background:var(--ef-accent) !important;
+                                        }
+                                        .t-TreeNav .a-TreeView-content:hover{
+                                          background:rgba(255,255,255,.08) !important;
+                                          }
+                                          .t-TreeNav .a-TreeView-label{
+                                            font-weight:500;
+                                              letter-spacing:-0.01em;
+                                              }
+
+                                              #t_Header, .t-Header{
+                                                background:#1d1d1f !important;
+                                                  border-bottom:none !important;
+                                                  }
+                                                  .t-Body-title, .t-Header-branding .t-Header-logo-text{
+                                                    font-weight:700;
+                                                      letter-spacing:-0.02em;
+                                                      }
+
+                                                      .t-Body-title-wrap{
+                                                        background:var(--ef-bg) !important;
+                                                          border-bottom:1px solid var(--ef-border) !important;
+                                                          }
+                                                          h1.t-Body-title, .t-Body-title h1{
+                                                            font-size:32px !important;
+                                                              font-weight:700 !important;
+                                                                letter-spacing:-0.02em !important;
+                                                                  color:var(--ef-ink) !important;
+                                                                  }
+
+                                                                  .t-Region{
+                                                                    border-radius:var(--ef-radius) !important;
+                                                                      border:1px solid var(--ef-border) !important;
+                                                                        box-shadow:var(--ef-shadow) !important;
+                                                                          overflow:hidden;
+                                                                          }
+                                                                          .t-Region-header{
+                                                                            background:var(--ef-card) !important;
+                                                                              border-bottom:1px solid var(--ef-border) !important;
+                                                                                padding:18px 22px !important;
+                                                                                }
+                                                                                .t-Region-title{
+                                                                                  font-size:17px !important;
+                                                                                    font-weight:700 !important;
+                                                                                      letter-spacing:-0.01em !important;
+                                                                                        color:var(--ef-ink) !important;
+                                                                                        }
+                                                                                        .t-Region-body{
+                                                                                          background:var(--ef-card) !important;
+                                                                                          }
+
+                                                                                          .t-Button{
+                                                                                            border-radius:10px !important;
+                                                                                              font-weight:500 !important;
+                                                                                                letter-spacing:-0.01em;
+                                                                                                  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+                                                                                                    border:none !important;
+                                                                                                    }
+                                                                                                    .t-Button--hot{
+                                                                                                      background:var(--ef-accent) !important;
+                                                                                                        box-shadow:0 2px 8px rgba(0,113,227,.25);
+                                                                                                        }
+                                                                                                        .t-Button--hot:hover{
+                                                                                                          background:#0077ed !important;
+                                                                                                            transform:translateY(-1px);
+                                                                                                              box-shadow:0 6px 16px rgba(0,113,227,.32);
+                                                                                                              }
+                                                                                                              .t-Button:not(.t-Button--hot):hover{
+                                                                                                                transform:translateY(-1px);
+                                                                                                                }
+
+                                                                                                                .a-IRR-table, .t-Report table, table.t-Report{
+                                                                                                                  border-radius:12px;
+                                                                                                                    overflow:hidden;
+                                                                                                                    }
+                                                                                                                    .a-IRR-table thead th, .t-Report thead th, .t-Report-tableHeader{
+                                                                                                                      background:#fafafa !important;
+                                                                                                                        color:var(--ef-muted) !important;
+                                                                                                                          font-weight:600 !important;
+                                                                                                                            text-transform:uppercase;
+                                                                                                                              font-size:11px !important;
+                                                                                                                                letter-spacing:.04em;
+                                                                                                                                  border-bottom:1px solid var(--ef-border) !important;
+                                                                                                                                  }
+                                                                                                                                  .a-IRR-table tbody tr:hover, .t-Report tbody tr:hover{
+                                                                                                                                    background:#f7f9fc !important;
+                                                                                                                                    }
+                                                                                                                                    .a-IRR-table td, .t-Report td{
+                                                                                                                                      border-bottom:1px solid var(--ef-border) !important;
+                                                                                                                                        padding:12px 16px !important;
+                                                                                                                                        }
+
+                                                                                                                                        .apex-item-text, .apex-item-textarea, .apex-item-select, input.apex-item-text, select.apex-item-select{
+                                                                                                                                          border-radius:10px !important;
+                                                                                                                                            border:1px solid rgba(0,0,0,.12) !important;
+                                                                                                                                              padding:10px 12px !important;
+                                                                                                                                                transition:border-color .15s ease, box-shadow .15s ease;
+                                                                                                                                                }
+                                                                                                                                                .apex-item-text:focus, .apex-item-textarea:focus, .apex-item-select:focus{
+                                                                                                                                                  border-color:var(--ef-accent) !important;
+                                                                                                                                                    box-shadow:0 0 0 3px rgba(0,113,227,.15) !important;
+                                                                                                                                                      outline:none !important;
+                                                                                                                                                      }
+                                                                                                                                                      .t-Form-labelContainer label{
+                                                                                                                                                        font-weight:500;
+                                                                                                                                                          color:var(--ef-ink);
+                                                                                                                                                          }
+
+                                                                                                                                                          .t-Breadcrumb a{
+                                                                                                                                                            color:var(--ef-muted) !important;
+                                                                                                                                                            }
+                                                                                                                                                            .t-Breadcrumb a:hover{
+                                                                                                                                                              color:var(--ef-accent) !important;
+                                                                                                                                                              }
+
+                                                                                                                                                              ::-webkit-scrollbar{width:10px;height:10px;}
+                                                                                                                                                              ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.18);border-radius:8px;}
+                                                                                                                                                              ::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.3);}
+                                                                                                                                                              
+}
+
+/* Fix icon-prefixed inputs losing their reserved left padding */
+.apex-item-has-icon.apex-item-text{
+  padding-left:44px !important;
+  }
+
+  /* ===== Login page — dark, Apple-inspired ===== */
+  body.t-PageBody--login{
+    background:radial-gradient(circle at 20% 20%, #1c1c1e 0%, #000000 55%, #000000 100%) !important;
+      min-height:100vh;
+      }
+      body.t-PageBody--login .t-Login-containerBody{
+        display:flex;
+          align-items:center;
+            justify-content:center;
+              min-height:100vh;
+              }
+              body.t-PageBody--login .t-Login-region{
+                background:rgba(255,255,255,.06) !important;
+                  backdrop-filter:blur(24px);
+                    -webkit-backdrop-filter:blur(24px);
+                      border:1px solid rgba(255,255,255,.10) !important;
+                        border-radius:24px !important;
+                          box-shadow:0 24px 80px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.3) !important;
+                            padding:44px 40px !important;
+                              width:400px;
+                                max-width:92vw;
+                                }
+                                body.t-PageBody--login .t-Login-logo{
+                                  filter:drop-shadow(0 8px 24px rgba(0,113,227,.35));
+                                  }
+                                  body.t-PageBody--login .t-Login-title{
+                                    color:#f5f5f7 !important;
+                                      font-size:26px !important;
+                                        font-weight:700 !important;
+                                          letter-spacing:-0.02em !important;
+                                            text-align:center;
+                                            }
+                                            body.t-PageBody--login .t-Form-labelContainer label{
+                                              color:#a1a1a6 !important;
+                                                font-weight:500;
+                                                  font-size:13px;
+                                                  }
+                                                  body.t-PageBody--login .apex-item-text,
+                                                  body.t-PageBody--login input.apex-item-text{
+                                                    background:rgba(255,255,255,.06) !important;
+                                                      border:1px solid rgba(255,255,255,.14) !important;
+                                                        color:#f5f5f7 !important;
+                                                          border-radius:12px !important;
+                                                          }
+                                                          body.t-PageBody--login .apex-item-text::placeholder{
+                                                            color:#6e6e73 !important;
+                                                            }
+                                                            body.t-PageBody--login .apex-item-text:focus{
+                                                              border-color:var(--ef-accent) !important;
+                                                                box-shadow:0 0 0 3px rgba(0,113,227,.28) !important;
+                                                                  background:rgba(255,255,255,.09) !important;
+                                                                  }
+                                                                  body.t-PageBody--login .a-Icon, body.t-PageBody--login .t-Icon{
+                                                                    color:#8e8e93 !important;
+                                                                    }
+                                                                    body.t-PageBody--login .t-Button--hot{
+                                                                      width:100%;
+                                                                        padding:13px !important;
+                                                                          font-size:15px !important;
+                                                                            border-radius:12px !important;
+                                                                              background:var(--ef-accent) !important;
+                                                                                box-shadow:0 4px 16px rgba(0,113,227,.4) !important;
+                                                                                }
+                                                                                body.t-PageBody--login .t-Button--hot:hover{
+                                                                                  background:#0077ed !important;
+                                                                                    transform:translateY(-1px);
+                                                                                    }
+                                                                                    body.t-PageBody--login .t-Login-actions a,
+                                                                                    body.t-PageBody--login a{
+                                                                                      color:#a1a1a6 !important;
+                                                                                      }
+                                                                                      body.t-PageBody--login .t-Login-actions a:hover,
+                                                                                      body.t-PageBody--login a:hover{
+                                                                                        color:#42a5ff !important;
+                                                                                        }
+                                                                                        body.t-PageBody--login .apex-item-single-checkbox label{
+                                                                                          color:#a1a1a6 !important;
+                                                                                          }
+                                                                                          
+
+                                                                                          .apex-item-has-icon.apex-item-text, input.apex-item-has-icon.apex-item-text{
+                                                                                            padding-top:10px !important;
+                                                                                              padding-right:12px !important;
+                                                                                                padding-bottom:10px !important;
+                                                                                                  padding-left:44px !important;
+                                                                                                  }
+                                                                                                  body.t-PageBody--login .apex-item-has-icon.apex-item-text{
+                                                                                                    padding-top:12px !important;
+                                                                                                      padding-right:14px !important;
+                                                                                                        padding-bottom:12px !important;
+                                                                                                          padding-left:46px !important;
+                                                                                                          }
+                                                                                                          
+
+                                                                                                          /* Unify username/password field visual width — password wrapper carries the
+                                                                                                             background/border, the input itself goes borderless so it and the
+                                                                                                                show/hide toggle read as one seamless pill matching the username field */
+                                                                                                                body.t-PageBody--login .apex-item-group--password{
+                                                                                                                  background:rgba(255,255,255,.06) !important;
+                                                                                                                    border:1px solid rgba(255,255,255,.14) !important;
+                                                                                                                      border-radius:12px !important;
+                                                                                                                        display:flex !important;
+                                                                                                                          align-items:center;
+                                                                                                                          }
+                                                                                                                          body.t-PageBody--login .apex-item-group--password:focus-within{
+                                                                                                                            border-color:var(--ef-accent) !important;
+                                                                                                                              box-shadow:0 0 0 3px rgba(0,113,227,.28) !important;
+                                                                                                                              }
+                                                                                                                              body.t-PageBody--login .apex-item-group--password .apex-item-text{
+                                                                                                                                background:transparent !important;
+                                                                                                                                  border:none !important;
+                                                                                                                                    box-shadow:none !important;
+                                                                                                                                      flex:1;
+                                                                                                                                      }
+                                                                                                                                      body.t-PageBody--login .apex-item-group--password .t-Button--passwordVisibility{
+                                                                                                                                        color:#8e8e93 !important;
+                                                                                                                                          background:transparent !important;
+                                                                                                                                          }
+                                                                                                                                          
+
+                                                                                                                                          /* Replace default rocket app-icon on the login screen with the EnterpriseFlow mark */
+                                                                                                                                          body.t-PageBody--login .t-Login-logo{
+                                                                                                                                            display:none !important;
+                                                                                                                                            }
+                                                                                                                                            body.t-PageBody--login .t-Login-header{
+                                                                                                                                              position:relative;
+                                                                                                                                                padding-top:96px;
+                                                                                                                                                }
+                                                                                                                                                body.t-PageBody--login .t-Login-header::before{
+                                                                                                                                                  content:"";
+                                                                                                                                                    position:absolute;
+                                                                                                                                                      top:0;
+                                                                                                                                                        left:50%;
+                                                                                                                                                          transform:translateX(-50%);
+                                                                                                                                                            width:72px;
+                                                                                                                                                              height:72px;
+                                                                                                                                                                border-radius:20px;
+                                                                                                                                                                  background:linear-gradient(135deg,#42a5ff,#0071e3);
+                                                                                                                                                                    box-shadow:0 8px 24px rgba(0,113,227,.35);
+                                                                                                                                                                    }
+                                                                                                                                                                    body.t-PageBody--login .t-Login-header::after{
+                                                                                                                                                                      content:"";
+                                                                                                                                                                        position:absolute;
+                                                                                                                                                                          top:23px;
+                                                                                                                                                                            left:50%;
+                                                                                                                                                                              transform:translateX(-50%);
+                                                                                                                                                                                width:40px;
+                                                                                                                                                                                  height:27px;
+                                                                                                                                                                                    background-repeat:no-repeat;
+                                                                                                                                                                                      background-size:contain;
+                                                                                                                                                                                        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='white' stroke-width='5'/%3E%3Ccircle cx='32' cy='16' r='11' fill='none' stroke='white' stroke-width='5'/%3E%3C/svg%3E");
+                                                                                                                                                                                        }
+                                                                                                                                                                                        
+
+                                                                                                                                                                                        /* AI Chat page */
+                                                                                                                                                                                        .ef-chat{
+                                                                                                                                                                                        display:flex;
+                                                                                                                                                                                        flex-direction:column;
+                                                                                                                                                                                        height:calc(100vh - 220px);
+                                                                                                                                                                                        min-height:520px;
+                                                                                                                                                                                        background:var(--ef-card);
+                                                                                                                                                                                        border:1px solid var(--ef-border);
+                                                                                                                                                                                        border-radius:var(--ef-radius);
+                                                                                                                                                                                        box-shadow:var(--ef-shadow);
+                                                                                                                                                                                        overflow:hidden;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-header{
+                                                                                                                                                                                        display:flex;
+                                                                                                                                                                                        align-items:center;
+                                                                                                                                                                                        gap:12px;
+                                                                                                                                                                                        padding-top:16px;
+                                                                                                                                                                                        padding-right:20px;
+                                                                                                                                                                                        padding-bottom:16px;
+                                                                                                                                                                                        padding-left:20px;
+                                                                                                                                                                                        border-bottom:1px solid var(--ef-border);
+                                                                                                                                                                                        background:var(--ef-card);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-header-icon{
+                                                                                                                                                                                        width:36px;
+                                                                                                                                                                                        height:36px;
+                                                                                                                                                                                        border-radius:11px;
+                                                                                                                                                                                        display:flex;
+                                                                                                                                                                                        align-items:center;
+                                                                                                                                                                                        justify-content:center;
+                                                                                                                                                                                        background:linear-gradient(135deg,var(--ef-accent-2),var(--ef-accent));
+                                                                                                                                                                                        box-shadow:0 4px 10px rgba(0,113,227,.28);
+                                                                                                                                                                                        flex-shrink:0;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-header-text{
+                                                                                                                                                                                        display:flex;
+                                                                                                                                                                                        flex-direction:column;
+                                                                                                                                                                                        line-height:1.25;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-title{
+                                                                                                                                                                                        font-weight:700;
+                                                                                                                                                                                        font-size:15px;
+                                                                                                                                                                                        letter-spacing:-0.01em;
+                                                                                                                                                                                        color:var(--ef-ink);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-sub{
+                                                                                                                                                                                        font-size:12px;
+                                                                                                                                                                                        color:var(--ef-muted);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-new{
+                                                                                                                                                                                        margin-left:auto;
+                                                                                                                                                                                        border:1px solid var(--ef-border);
+                                                                                                                                                                                        background:var(--ef-card);
+                                                                                                                                                                                        color:var(--ef-muted);
+                                                                                                                                                                                        font-size:12px;
+                                                                                                                                                                                        font-weight:600;
+                                                                                                                                                                                        padding-top:7px;
+                                                                                                                                                                                        padding-right:12px;
+                                                                                                                                                                                        padding-bottom:7px;
+                                                                                                                                                                                        padding-left:12px;
+                                                                                                                                                                                        border-radius:20px;
+                                                                                                                                                                                        cursor:pointer;
+                                                                                                                                                                                        transition:background .15s ease,color .15s ease;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-new:hover{
+                                                                                                                                                                                        background:var(--ef-bg);
+                                                                                                                                                                                        color:var(--ef-ink);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-log{
+                                                                                                                                                                                        flex:1;
+                                                                                                                                                                                        overflow-y:auto;
+                                                                                                                                                                                        display:flex;
+                                                                                                                                                                                        flex-direction:column;
+                                                                                                                                                                                        gap:14px;
+                                                                                                                                                                                        padding-top:22px;
+                                                                                                                                                                                        padding-right:24px;
+                                                                                                                                                                                        padding-bottom:22px;
+                                                                                                                                                                                        padding-left:24px;
+                                                                                                                                                                                        background:var(--ef-bg);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-msg{
+                                                                                                                                                                                        max-width:72%;
+                                                                                                                                                                                        padding-top:11px;
+                                                                                                                                                                                        padding-right:15px;
+                                                                                                                                                                                        padding-bottom:11px;
+                                                                                                                                                                                        padding-left:15px;
+                                                                                                                                                                                        border-radius:16px;
+                                                                                                                                                                                        font-size:14px;
+                                                                                                                                                                                        line-height:1.5;
+                                                                                                                                                                                        white-space:pre-wrap;
+                                                                                                                                                                                        word-break:break-word;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-msg-user{
+                                                                                                                                                                                        align-self:flex-end;
+                                                                                                                                                                                        background:linear-gradient(135deg,var(--ef-accent-2),var(--ef-accent));
+                                                                                                                                                                                        color:#ffffff;
+                                                                                                                                                                                        border-bottom-right-radius:4px;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-msg-assistant{
+                                                                                                                                                                                        align-self:flex-start;
+                                                                                                                                                                                        background:var(--ef-card);
+                                                                                                                                                                                        color:var(--ef-ink);
+                                                                                                                                                                                        border:1px solid var(--ef-border);
+                                                                                                                                                                                        border-bottom-left-radius:4px;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-msg-assistant.ef-typing{
+                                                                                                                                                                                        color:var(--ef-muted);
+                                                                                                                                                                                        font-style:italic;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-inputbar{
+                                                                                                                                                                                        display:flex;
+                                                                                                                                                                                        align-items:flex-end;
+                                                                                                                                                                                        gap:10px;
+                                                                                                                                                                                        padding-top:14px;
+                                                                                                                                                                                        padding-right:16px;
+                                                                                                                                                                                        padding-bottom:14px;
+                                                                                                                                                                                        padding-left:16px;
+                                                                                                                                                                                        border-top:1px solid var(--ef-border);
+                                                                                                                                                                                        background:var(--ef-card);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-textarea{
+                                                                                                                                                                                        flex:1;
+                                                                                                                                                                                        resize:none;
+                                                                                                                                                                                        max-height:140px;
+                                                                                                                                                                                        border:1px solid rgba(0,0,0,.12);
+                                                                                                                                                                                        border-radius:14px;
+                                                                                                                                                                                        padding-top:10px;
+                                                                                                                                                                                        padding-right:14px;
+                                                                                                                                                                                        padding-bottom:10px;
+                                                                                                                                                                                        padding-left:14px;
+                                                                                                                                                                                        font-size:14px;
+                                                                                                                                                                                        font-family:inherit;
+                                                                                                                                                                                        line-height:1.4;
+                                                                                                                                                                                        color:var(--ef-ink);
+                                                                                                                                                                                        background:var(--ef-bg);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-textarea:focus{
+                                                                                                                                                                                        outline:none;
+                                                                                                                                                                                        border-color:var(--ef-accent);
+                                                                                                                                                                                        box-shadow:0 0 0 3px rgba(0,113,227,.15);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-send{
+                                                                                                                                                                                        width:38px;
+                                                                                                                                                                                        height:38px;
+                                                                                                                                                                                        border-radius:50%;
+                                                                                                                                                                                        border:none;
+                                                                                                                                                                                        flex-shrink:0;
+                                                                                                                                                                                        display:flex;
+                                                                                                                                                                                        align-items:center;
+                                                                                                                                                                                        justify-content:center;
+                                                                                                                                                                                        background:var(--ef-accent);
+                                                                                                                                                                                        cursor:pointer;
+                                                                                                                                                                                        transition:background .15s ease,transform .15s ease;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-send:hover{
+                                                                                                                                                                                        background:#0077ed;
+                                                                                                                                                                                        transform:translateY(-1px);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-send:disabled{
+                                                                                                                                                                                        opacity:.45;
+                                                                                                                                                                                        cursor:default;
+                                                                                                                                                                                        transform:none;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-chat-textarea:disabled{
+                                                                                                                                                                                        opacity:.6;
+                                                                                                                                                                                        }
+
+                                                                                                                                                                                        /* Global floating AI chat widget */
+                                                                                                                                                                                        .ef-widget-root{
+                                                                                                                                                                                        position:fixed;
+                                                                                                                                                                                        right:24px;
+                                                                                                                                                                                        bottom:24px;
+                                                                                                                                                                                        z-index:9999;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-widget-bubble{
+                                                                                                                                                                                        width:58px;
+                                                                                                                                                                                        height:58px;
+                                                                                                                                                                                        border-radius:50%;
+                                                                                                                                                                                        border:none;
+                                                                                                                                                                                        display:flex;
+                                                                                                                                                                                        align-items:center;
+                                                                                                                                                                                        justify-content:center;
+                                                                                                                                                                                        background:linear-gradient(135deg,var(--ef-accent-2),var(--ef-accent));
+                                                                                                                                                                                        box-shadow:0 8px 24px rgba(0,113,227,.35);
+                                                                                                                                                                                        cursor:pointer;
+                                                                                                                                                                                        transition:transform .18s ease,opacity .18s ease;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-widget-bubble:hover{
+                                                                                                                                                                                        transform:scale(1.06);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-widget-bubble-hidden{
+                                                                                                                                                                                        opacity:0;
+                                                                                                                                                                                        transform:scale(0);
+                                                                                                                                                                                        pointer-events:none;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-widget-panel{
+                                                                                                                                                                                        position:fixed;
+                                                                                                                                                                                        right:24px;
+                                                                                                                                                                                        bottom:24px;
+                                                                                                                                                                                        width:380px;
+                                                                                                                                                                                        height:560px;
+                                                                                                                                                                                        max-height:calc(100vh - 48px);
+                                                                                                                                                                                        transform:scale(0.85);
+                                                                                                                                                                                        transform-origin:bottom right;
+                                                                                                                                                                                        opacity:0;
+                                                                                                                                                                                        pointer-events:none;
+                                                                                                                                                                                        transition:transform .18s ease,opacity .18s ease;
+                                                                                                                                                                                        box-shadow:0 20px 60px rgba(0,0,0,.22);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-widget-panel.ef-widget-open{
+                                                                                                                                                                                        opacity:1;
+                                                                                                                                                                                        transform:scale(1);
+                                                                                                                                                                                        pointer-events:auto;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-widget-close{
+                                                                                                                                                                                        margin-left:auto;
+                                                                                                                                                                                        width:28px;
+                                                                                                                                                                                        height:28px;
+                                                                                                                                                                                        border-radius:50%;
+                                                                                                                                                                                        border:none;
+                                                                                                                                                                                        background:transparent;
+                                                                                                                                                                                        color:var(--ef-muted);
+                                                                                                                                                                                        font-size:20px;
+                                                                                                                                                                                        line-height:1;
+                                                                                                                                                                                        cursor:pointer;
+                                                                                                                                                                                        transition:background .15s ease,color .15s ease;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-widget-close:hover{
+                                                                                                                                                                                        background:var(--ef-bg);
+                                                                                                                                                                                        color:var(--ef-ink);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        @media (max-width:480px){
+                                                                                                                                                                                        .ef-widget-panel{
+                                                                                                                                                                                        right:12px;
+                                                                                                                                                                                        bottom:12px;
+                                                                                                                                                                                        left:12px;
+                                                                                                                                                                                        width:auto;
+                                                                                                                                                                                        height:calc(100vh - 96px);
+                                                                                                                                                                                        }
+                                                                                                                                                                                        .ef-widget-bubble{
+                                                                                                                                                                                        right:8px;
+                                                                                                                                                                                        bottom:8px;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        }
+
+                                                                                                                                                                                        /* Dashboard page: hide redundant page-title heading (hero already shows welcome) */
+                                                                                                                                                                                        .page-48 .t-Breadcrumb-label{
+                                                                                                                                                                                        display:none;
+                                                                                                                                                                                        }
+
+                                                                                                                                                                                        .page-48 .t-BreadcrumbRegion--useBreadcrumbTitle .t-Breadcrumb-item:last-child .t-Breadcrumb-label{
+                                                                                                                                                                                        display:none !important;
+                                                                                                                                                                                        }
+
+                                                                                                                                                                                        /* Collapse the empty page-title/breadcrumb bar shown on every page (title & breadcrumb text are hidden by theme, but the region still reserved height) */
+                                                                                                                                                                                        #t_Body_title{
+                                                                                                                                                                                          display:none !important;
+                                                                                                                                                                                          }
+                                                                                                                                                                                          
+
+/* Fix floating-label overlap on edit forms: fields with an existing value
+   (.js-show-label / .is-active) don't reserve enough top padding for the
+   shrunk label, so the label text visually collides with the value text. */
+.t-Form-fieldContainer--floatingLabel.js-show-label .t-Form-inputContainer input,
+.t-Form-fieldContainer--floatingLabel.is-active .t-Form-inputContainer input,
+.t-Form-fieldContainer--floatingLabel.js-show-label .t-Form-inputContainer select,
+.t-Form-fieldContainer--floatingLabel.is-active .t-Form-inputContainer select,
+.t-Form-fieldContainer--floatingLabel.js-show-label .t-Form-inputContainer textarea,
+.t-Form-fieldContainer--floatingLabel.is-active .t-Form-inputContainer textarea{
+  padding-top:20px !important;
+  padding-bottom:4px !important;
+}
