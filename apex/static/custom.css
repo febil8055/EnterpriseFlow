@@ -580,3 +580,47 @@
   padding-top:20px !important;
   padding-bottom:4px !important;
 }
+
+
+/* ============================================================
+   Global dark mode (toggle button injected sitewide by widget.js,
+   state in localStorage 'ef-theme', attribute on <html>).
+   First pass: page background, regions/cards, report tables, form
+   fields, buttons. Nav sidebar and header are already dark always,
+   so they need no override here.
+   ============================================================ */
+html[data-theme="dark"]{color-scheme:dark;}
+html[data-theme="dark"] body,
+html[data-theme="dark"] .t-Body,
+html[data-theme="dark"] .t-PageBody{background:#000 !important;color:#f5f5f7;}
+html[data-theme="dark"] .t-Body-contentInner{color:#f5f5f7;}
+html[data-theme="dark"] .t-Region{background:#1c1c1e !important;border-color:rgba(255,255,255,.08) !important;color:#f5f5f7;}
+html[data-theme="dark"] .t-Region-header{background:transparent !important;}
+html[data-theme="dark"] .t-Region-title,
+html[data-theme="dark"] .t-Region-headerItems{color:#f5f5f7 !important;}
+html[data-theme="dark"] .t-Button{background:#2c2c2e !important;color:#f5f5f7 !important;border-color:rgba(255,255,255,.12) !important;}
+html[data-theme="dark"] .t-Button--hot{background:var(--ef-accent) !important;color:#fff !important;border-color:var(--ef-accent) !important;}
+html[data-theme="dark"] .a-IRR-table,
+html[data-theme="dark"] .t-Report,
+html[data-theme="dark"] table.t-Report{background:#1c1c1e !important;color:#f5f5f7 !important;}
+html[data-theme="dark"] .a-IRR-table thead th,
+html[data-theme="dark"] .t-Report thead th,
+html[data-theme="dark"] .t-Report-tableHeader{background:#2c2c2e !important;color:#f5f5f7 !important;border-color:rgba(255,255,255,.08) !important;}
+html[data-theme="dark"] .a-IRR-table td,
+html[data-theme="dark"] .t-Report td{border-color:rgba(255,255,255,.06) !important;color:#e5e5e7 !important;}
+html[data-theme="dark"] .a-IRR-table tbody tr:hover,
+html[data-theme="dark"] .t-Report tbody tr:hover{background:#2c2c2e !important;}
+html[data-theme="dark"] .apex-item-text,
+html[data-theme="dark"] .apex-item-textarea,
+html[data-theme="dark"] .apex-item-select,
+html[data-theme="dark"] input[type=text],
+html[data-theme="dark"] input[type=email],
+html[data-theme="dark"] input[type=password],
+html[data-theme="dark"] input[type=number],
+html[data-theme="dark"] input[type=search],
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select{background:#2c2c2e !important;color:#f5f5f7 !important;border-color:rgba(255,255,255,.14) !important;}
+html[data-theme="dark"] .t-Form-label{color:#e5e5e7 !important;}
+html[data-theme="dark"] .t-Card,
+html[data-theme="dark"] .t-Login{background:#1c1c1e !important;color:#f5f5f7 !important;}
+html[data-theme="dark"] a{color:#5eb1ff;}

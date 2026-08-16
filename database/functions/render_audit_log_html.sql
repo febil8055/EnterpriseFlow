@@ -45,6 +45,23 @@ BEGIN
 .ef-diff-added{color:#1a7f4e;word-break:break-word;}
 .ef-diff-removed{color:#c0362c;text-decoration:line-through;word-break:break-word;}
 .ef-diff-empty{color:#98a2b3;font-size:12.5px;font-style:italic;}
+html[data-theme="dark"] .ef-audit-head h1,
+html[data-theme="dark"] .ef-audit-stat .n,
+html[data-theme="dark"] .ef-audit-title{color:#f5f5f7;}
+html[data-theme="dark"] .ef-audit-head p,
+html[data-theme="dark"] .ef-audit-stat .l,
+html[data-theme="dark"] .ef-audit-sub,
+html[data-theme="dark"] .ef-diff-key{color:#9a9aa0;}
+html[data-theme="dark"] .ef-audit-stat,
+html[data-theme="dark"] .ef-audit-card{background:#1c1c1e;border-color:rgba(255,255,255,.08);box-shadow:0 1px 2px rgba(0,0,0,.3),0 8px 20px -14px rgba(0,0,0,.6);}
+html[data-theme="dark"] .ef-audit-diff{border-top-color:rgba(255,255,255,.08);}
+html[data-theme="dark"] .ef-audit-badge.insert{background:rgba(74,222,128,.16);color:#4ade80;}
+html[data-theme="dark"] .ef-audit-badge.update{background:rgba(94,177,255,.16);color:#5eb1ff;}
+html[data-theme="dark"] .ef-audit-badge.delete{background:rgba(255,138,128,.16);color:#ff8a80;}
+html[data-theme="dark"] .ef-diff-new{color:#4ade80;}
+html[data-theme="dark"] .ef-diff-old{color:#ff8a80;}
+html[data-theme="dark"] .ef-diff-added{color:#4ade80;}
+html[data-theme="dark"] .ef-diff-removed{color:#ff8a80;}
 </style>~';
 
   l_html := l_html || '<div class="ef ef-audit">';
@@ -89,7 +106,12 @@ BEGIN
         l_new  := JSON_OBJECT_T.parse(r.new_values);
         l_keys := l_new.get_keys();
         FOR i IN 1 .. l_keys.COUNT LOOP
-          l_new_v := NVL(l_new.get_string(l_keys(i)), 'null');
+          BEGIN
+            l_new_v := l_new.get_string(l_keys(i));
+          EXCEPTION WHEN OTHERS THEN
+            l_new_v := NULL;
+          END;
+          l_new_v := NVL(l_new_v, 'null');
           l_diff_html := l_diff_html || '<div class="ef-diff-row"><span class="ef-diff-key">'||LOWER(l_keys(i))||'</span>'
             || '<span class="ef-diff-added">'||APEX_ESCAPE.HTML(l_new_v)||'</span></div>';
         END LOOP;
@@ -97,7 +119,12 @@ BEGIN
         l_old  := JSON_OBJECT_T.parse(r.old_values);
         l_keys := l_old.get_keys();
         FOR i IN 1 .. l_keys.COUNT LOOP
-          l_old_v := NVL(l_old.get_string(l_keys(i)), 'null');
+          BEGIN
+            l_old_v := l_old.get_string(l_keys(i));
+          EXCEPTION WHEN OTHERS THEN
+            l_old_v := NULL;
+          END;
+          l_old_v := NVL(l_old_v, 'null');
           l_diff_html := l_diff_html || '<div class="ef-diff-row"><span class="ef-diff-key">'||LOWER(l_keys(i))||'</span>'
             || '<span class="ef-diff-removed">'||APEX_ESCAPE.HTML(l_old_v)||'</span></div>';
         END LOOP;
@@ -106,8 +133,18 @@ BEGIN
         l_new  := JSON_OBJECT_T.parse(r.new_values);
         l_keys := l_new.get_keys();
         FOR i IN 1 .. l_keys.COUNT LOOP
-          l_old_v := NVL(l_old.get_string(l_keys(i)), 'null');
-          l_new_v := NVL(l_new.get_string(l_keys(i)), 'null');
+          BEGIN
+            l_old_v := l_old.get_string(l_keys(i));
+          EXCEPTION WHEN OTHERS THEN
+            l_old_v := NULL;
+          END;
+          BEGIN
+            l_new_v := l_new.get_string(l_keys(i));
+          EXCEPTION WHEN OTHERS THEN
+            l_new_v := NULL;
+          END;
+          l_old_v := NVL(l_old_v, 'null');
+          l_new_v := NVL(l_new_v, 'null');
           IF l_old_v != l_new_v THEN
             l_diff_html := l_diff_html || '<div class="ef-diff-row"><span class="ef-diff-key">'||LOWER(l_keys(i))||'</span>'
               || '<span class="ef-diff-old">'||APEX_ESCAPE.HTML(l_old_v)||'</span>'
@@ -122,10 +159,13 @@ BEGIN
 
       l_html := l_html || '<div class="ef-audit-card"><div class="ef-audit-top">';
       l_html := l_html || '<div class="ef-audit-icon" style="background:'||l_color||';">'||l_letter||'</div>';
-      l_html := l_html || '<div class="ef-audit-meta"><div class="ef-audit-title">'||INITCAP(r.table_name)||' <span>#'||r.record_id||'</span></div>';
+      l_html := l_html || '<div class="ef-audit-meta"><div class="ef-audit-title">'||INITCAP(r.table_name)||' <span>#'||TO_CHAR(r.record_id)||'</span></div>';
       l_html := l_html || '<div class="ef-audit-sub">'||TO_CHAR(r.changed_at,'DD Mon YYYY, HH24:MI')||' &middot; '||APEX_ESCAPE.HTML(r.changed_by)||'</div></div>';
       l_html := l_html || '<span class="ef-audit-badge '||LOWER(r.action)||'">'||r.action||'</span>';
       l_html := l_html || '</div><div class="ef-audit-diff">'||l_diff_html||'</div></div>';
+    EXCEPTION WHEN OTHERS THEN
+      l_html := l_html || '<div class="ef-audit-card"><div class="ef-audit-sub">Unable to render entry #'
+        ||TO_CHAR(r.audit_log_id)||' ('||APEX_ESCAPE.HTML(SQLERRM)||')</div></div>';
     END;
   END LOOP;
 

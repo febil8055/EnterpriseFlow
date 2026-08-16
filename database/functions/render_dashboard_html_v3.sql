@@ -7,6 +7,10 @@ CREATE OR REPLACE FUNCTION "RENDER_DASHBOARD_HTML" RETURN CLOB IS
   l_hr NUMBER := TO_NUMBER(TO_CHAR(SYSDATE,'HH24'));
   l_any_deadline BOOLEAN := FALSE;
   l_any_activity BOOLEAN := FALSE;
+  l_org_new NUMBER; l_dept_new NUMBER; l_emp_new NUMBER; l_proj_new NUMBER; l_task_new NUMBER;
+  l_resolve_task_id   NUMBER;
+  l_resolve_task_name VARCHAR2(200);
+  l_resolve_label     VARCHAR2(40);
 BEGIN
   SELECT COUNT(*) INTO l_orgs FROM organization;
   SELECT COUNT(*) INTO l_depts FROM department;
@@ -20,6 +24,39 @@ BEGIN
   SELECT COUNT(*) INTO l_blocked FROM task t JOIN status s ON s.status_id = t.status_id WHERE s.status_code = 'BLOCKED';
   SELECT COUNT(*) INTO l_overdue FROM task t JOIN status s ON s.status_id = t.status_id
     WHERE s.status_code NOT IN ('DONE','CANCELLED') AND t.due_date IS NOT NULL AND t.due_date < TRUNC(SYSDATE);
+
+  -- Weekly trend badges ("+N this week") - only the 5 tables the audit
+  -- triggers actually cover. CLIENT/LOCATION have no TRG_<TABLE>_AU, so
+  -- they get no badge rather than a fabricated one.
+  SELECT COUNT(*) INTO l_org_new  FROM audit_log WHERE table_name = 'ORGANIZATION' AND action = 'INSERT' AND changed_at >= SYSDATE - 7;
+  SELECT COUNT(*) INTO l_dept_new FROM audit_log WHERE table_name = 'DEPARTMENT'   AND action = 'INSERT' AND changed_at >= SYSDATE - 7;
+  SELECT COUNT(*) INTO l_emp_new  FROM audit_log WHERE table_name = 'EMPLOYEE'     AND action = 'INSERT' AND changed_at >= SYSDATE - 7;
+  SELECT COUNT(*) INTO l_proj_new FROM audit_log WHERE table_name = 'PROJECT'      AND action = 'INSERT' AND changed_at >= SYSDATE - 7;
+  SELECT COUNT(*) INTO l_task_new FROM audit_log WHERE table_name = 'TASK'         AND action = 'INSERT' AND changed_at >= SYSDATE - 7;
+
+  -- Deterministic "resolve now" target for the AI insight card - picked
+  -- by the same rule the AI is asked to reason about (blocked first,
+  -- then earliest overdue), not parsed out of the AI's own text. Keeps
+  -- the link 100% reliable regardless of how the model phrases things.
+  BEGIN
+    SELECT t.task_id, t.task_name INTO l_resolve_task_id, l_resolve_task_name
+    FROM task t JOIN status s ON s.status_id = t.status_id
+    WHERE s.status_code = 'BLOCKED'
+    ORDER BY t.task_id
+    FETCH FIRST 1 ROW ONLY;
+    l_resolve_label := 'Unblock task';
+  EXCEPTION WHEN NO_DATA_FOUND THEN
+    BEGIN
+      SELECT t.task_id, t.task_name INTO l_resolve_task_id, l_resolve_task_name
+      FROM task t JOIN status s ON s.status_id = t.status_id
+      WHERE s.status_code NOT IN ('DONE','CANCELLED') AND t.due_date IS NOT NULL AND t.due_date < TRUNC(SYSDATE)
+      ORDER BY t.due_date ASC
+      FETCH FIRST 1 ROW ONLY;
+      l_resolve_label := 'Resolve overdue task';
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+      l_resolve_task_id := NULL;
+    END;
+  END;
 
   l_task_pct := CASE WHEN l_tasks = 0 THEN 0 ELSE ROUND(l_tasks_done / l_tasks * 100) END;
   l_proj_pct := CASE WHEN l_projects = 0 THEN 0 ELSE ROUND(l_projects_done / l_projects * 100) END;
@@ -79,13 +116,16 @@ BEGIN
 .ef-quick a:hover{transform:translateY(-2px);box-shadow:0 8px 20px -8px rgba(16,24,40,.25);}
 .ef-quick a .qd{width:7px;height:7px;border-radius:2px;}
 .ef-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:20px;}
-.ef-card{position:relative;background:#fff;border-radius:18px;padding:20px 20px 20px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px -12px rgba(16,24,40,.10);border:1px solid rgba(16,24,40,.04);border-top:3px solid var(--ac);transition:transform .2s ease,box-shadow .2s ease;animation:ef-fade-in .5s ease both;}
+.ef-card{position:relative;display:block;background:#fff;border-radius:18px;padding:20px 20px 20px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px -12px rgba(16,24,40,.10);border:1px solid rgba(16,24,40,.04);border-top:3px solid var(--ac);transition:transform .2s ease,box-shadow .2s ease;animation:ef-fade-in .5s ease both;text-decoration:none;color:inherit;}
 .ef-card:hover{transform:translateY(-3px);box-shadow:0 4px 10px rgba(16,24,40,.06),0 20px 36px -14px rgba(16,24,40,.16);}
 .ef-card-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .ef-icon-tile{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--ac2),var(--ac));flex:none;box-shadow:0 4px 10px -2px var(--ac2);}
 .ef-card-label{font-size:12.5px;font-weight:700;color:#667085;letter-spacing:.02em;text-transform:uppercase;}
 .ef-card-value{font-size:28px;font-weight:700;letter-spacing:-0.02em;color:#101828;line-height:1;margin-bottom:5px;}
 .ef-card-sub{font-size:12px;color:#8a94a6;font-weight:500;}
+.ef-trend{font-size:10.5px;font-weight:700;color:#1a7f4e;background:#e7f7ee;padding:2px 7px;border-radius:999px;margin-left:auto;flex:none;}
+.ef-resolve-btn{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:13px;font-weight:600;color:#0b0f19;background:#fff;padding:9px 15px;border-radius:10px;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease;box-shadow:0 1px 2px rgba(0,0,0,.1);}
+.ef-resolve-btn:hover{transform:translateY(-2px);box-shadow:0 8px 16px -6px rgba(0,0,0,.3);}
 .ef-spark-wrap{background:#fff;border-radius:18px;padding:22px 26px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px -12px rgba(16,24,40,.10);border:1px solid rgba(16,24,40,.04);margin-bottom:20px;animation:ef-fade-in .5s ease both;}
 .ef-spark-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;}
 .ef-spark-head h3{font-size:15.5px;font-weight:700;color:#101828;margin:0;letter-spacing:-0.01em;}
@@ -127,6 +167,36 @@ BEGIN
 .ef-empty{font-size:13px;color:#98a2b3;padding:20px 0;text-align:center;}
 .ef-activity-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;font-size:12px;font-weight:700;color:#fff;}
 @media (max-width:820px){.ef-two-col,.ef-overview{grid-template-columns:1fr;}}
+html[data-theme="dark"] .ef{color:#f5f5f7;}
+html[data-theme="dark"] .ef-card,
+html[data-theme="dark"] .ef-spark-wrap,
+html[data-theme="dark"] .ef-donut-card,
+html[data-theme="dark"] .ef-section{background:#1c1c1e;border-color:rgba(255,255,255,.08);box-shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);}
+html[data-theme="dark"] .ef-card-value,
+html[data-theme="dark"] .ef-donut-inner .pct,
+html[data-theme="dark"] .ef-donut-title,
+html[data-theme="dark"] .ef-section h2,
+html[data-theme="dark"] .ef-list-title,
+html[data-theme="dark"] .ef-bar-count,
+html[data-theme="dark"] .ef-spark-head h3{color:#f5f5f7;}
+html[data-theme="dark"] .ef-card-label,
+html[data-theme="dark"] .ef-card-sub,
+html[data-theme="dark"] .ef-donut-sub,
+html[data-theme="dark"] .ef-bar-label,
+html[data-theme="dark"] .ef-list-meta,
+html[data-theme="dark"] .ef-spark-head span,
+html[data-theme="dark"] .ef-spark-days span{color:#9a9aa0;}
+html[data-theme="dark"] .ef-donut-inner{background:#1c1c1e;}
+html[data-theme="dark"] .ef-donut{background:conic-gradient(var(--ac) calc(var(--pct)*1%), #2c2c2e 0);}
+html[data-theme="dark"] .ef-bar-track{background:#2c2c2e;}
+html[data-theme="dark"] .ef-list li{border-bottom-color:rgba(255,255,255,.08);}
+html[data-theme="dark"] .ef-quick a{background:#1c1c1e;color:#f5f5f7;border-color:rgba(255,255,255,.1);}
+html[data-theme="dark"] .ef-badge.neutral{background:#2c2c2e;color:#c7c7cc;}
+html[data-theme="dark"] .ef-badge.crit{background:rgba(255,105,97,.16);color:#ff8a80;}
+html[data-theme="dark"] .ef-badge.warn{background:rgba(255,184,77,.16);color:#ffb84d;}
+html[data-theme="dark"] .ef-badge.ok{background:rgba(74,222,128,.16);color:#4ade80;}
+html[data-theme="dark"] .ef-empty{color:#6e6e73;}
+html[data-theme="dark"] .ef-trend{background:rgba(74,222,128,.16);color:#4ade80;}
 </style>~';
 
   --------------------------------------------------------------------------
@@ -139,7 +209,12 @@ BEGIN
   IF l_ai_ok THEN
     l_html := l_html || '<div class="ef-ai-badge"><span class="dot"></span>AI Insight</div>';
   END IF;
-  l_html := l_html || '<h1>'||l_greeting||'</h1><p>'||l_insight_safe||'</p></div></div>';
+  l_html := l_html || '<h1>'||l_greeting||'</h1><p>'||l_insight_safe||'</p>';
+  IF l_resolve_task_id IS NOT NULL THEN
+    l_html := l_html || '<a class="ef-resolve-btn" href="'||APEX_PAGE.GET_URL(p_page=>43, p_items=>'P43_TASK_ID', p_values=>l_resolve_task_id)||'">'
+      ||APEX_ESCAPE.HTML(l_resolve_label)||': '||APEX_ESCAPE.HTML(l_resolve_task_name)||' &rarr;</a>';
+  END IF;
+  l_html := l_html || '</div></div>';
 
   l_html := l_html || '<div class="ef-hero-meta">';
   l_html := l_html || '<span class="ef-pill ef-live" id="ef-updated-pill" data-ts="'||TO_CHAR(SYSTIMESTAMP AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS"Z"')||'"><span class="pulse"></span><span id="ef-updated-text">Live</span></span>';
@@ -169,19 +244,36 @@ BEGIN
   --------------------------------------------------------------------------
   l_html := l_html || '<div class="ef-grid">';
 
-  l_html := l_html || q'~<div class="ef-card" style="--ac:#0071e3;--ac2:#42a5ff;"><div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16"/><path d="M9 9h1M9 13h1M14 9h1M14 13h1"/><path d="M17 21v-7a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v7"/><path d="M3 21h18"/></svg></div><span class="ef-card-label">Organizations</span></div><div class="ef-card-value">~' || l_orgs || '</div><div class="ef-card-sub">Business units</div></div>';
+  l_html := l_html || '<a href="'||APEX_PAGE.GET_URL(p_page=>5)||'" class="ef-card" style="--ac:#0071e3;--ac2:#42a5ff;">';
+  l_html := l_html || q'~<div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16"/><path d="M9 9h1M9 13h1M14 9h1M14 13h1"/><path d="M17 21v-7a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v7"/><path d="M3 21h18"/></svg></div><span class="ef-card-label">Organizations</span>~';
+  IF l_org_new > 0 THEN l_html := l_html || '<span class="ef-trend">+'||l_org_new||'</span>'; END IF;
+  l_html := l_html || '</div><div class="ef-card-value">'||l_orgs||'</div><div class="ef-card-sub">Business units</div></a>';
 
-  l_html := l_html || q'~<div class="ef-card" style="--ac:#34c759;--ac2:#6adf87;"><div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v4M12 11l-6 6M12 11l6 6"/></svg></div><span class="ef-card-label">Departments</span></div><div class="ef-card-value">~' || l_depts || '</div><div class="ef-card-sub">Across '||l_orgs||' org'||CASE WHEN l_orgs=1 THEN '' ELSE 's' END||'</div></div>';
+  l_html := l_html || '<a href="'||APEX_PAGE.GET_URL(p_page=>9)||'" class="ef-card" style="--ac:#34c759;--ac2:#6adf87;">';
+  l_html := l_html || q'~<div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v4M12 11l-6 6M12 11l6 6"/></svg></div><span class="ef-card-label">Departments</span>~';
+  IF l_dept_new > 0 THEN l_html := l_html || '<span class="ef-trend">+'||l_dept_new||'</span>'; END IF;
+  l_html := l_html || '</div><div class="ef-card-value">'||l_depts||'</div><div class="ef-card-sub">Across '||l_orgs||' org'||CASE WHEN l_orgs=1 THEN '' ELSE 's' END||'</div></a>';
 
-  l_html := l_html || q'~<div class="ef-card" style="--ac:#ff9500;--ac2:#ffb84d;"><div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="ef-card-label">Employees</span></div><div class="ef-card-value">~' || l_emps || '</div><div class="ef-card-sub">Headcount</div></div>';
+  l_html := l_html || '<a href="'||APEX_PAGE.GET_URL(p_page=>13)||'" class="ef-card" style="--ac:#ff9500;--ac2:#ffb84d;">';
+  l_html := l_html || q'~<div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="ef-card-label">Employees</span>~';
+  IF l_emp_new > 0 THEN l_html := l_html || '<span class="ef-trend">+'||l_emp_new||'</span>'; END IF;
+  l_html := l_html || '</div><div class="ef-card-value">'||l_emps||'</div><div class="ef-card-sub">Headcount</div></a>';
 
-  l_html := l_html || q'~<div class="ef-card" style="--ac:#af52de;--ac2:#cf8bef;"><div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><path d="M2 13h20"/></svg></div><span class="ef-card-label">Clients</span></div><div class="ef-card-value">~' || l_clients || '</div><div class="ef-card-sub">Active accounts</div></div>';
+  l_html := l_html || '<a href="'||APEX_PAGE.GET_URL(p_page=>19)||'" class="ef-card" style="--ac:#af52de;--ac2:#cf8bef;">';
+  l_html := l_html || q'~<div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><path d="M2 13h20"/></svg></div><span class="ef-card-label">Clients</span></div>~' || '<div class="ef-card-value">' || l_clients || '</div><div class="ef-card-sub">Active accounts</div></a>';
 
-  l_html := l_html || q'~<div class="ef-card" style="--ac:#ff3b30;--ac2:#ff7a70;"><div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><span class="ef-card-label">Locations</span></div><div class="ef-card-value">~' || l_locs || '</div><div class="ef-card-sub">Sites</div></div>';
+  l_html := l_html || '<a href="'||APEX_PAGE.GET_URL(p_page=>4)||'" class="ef-card" style="--ac:#ff3b30;--ac2:#ff7a70;">';
+  l_html := l_html || q'~<div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><span class="ef-card-label">Locations</span></div>~' || '<div class="ef-card-value">' || l_locs || '</div><div class="ef-card-sub">Sites</div></a>';
 
-  l_html := l_html || q'~<div class="ef-card" style="--ac:#00c7be;--ac2:#5fe6de;"><div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><span class="ef-card-label">Projects</span></div><div class="ef-card-value">~' || l_projects || '</div><div class="ef-card-sub">~'||l_projects_done||' completed</div></div>';
+  l_html := l_html || '<a href="'||APEX_PAGE.GET_URL(p_page=>40)||'" class="ef-card" style="--ac:#00c7be;--ac2:#5fe6de;">';
+  l_html := l_html || q'~<div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><span class="ef-card-label">Projects</span>~';
+  IF l_proj_new > 0 THEN l_html := l_html || '<span class="ef-trend">+'||l_proj_new||'</span>'; END IF;
+  l_html := l_html || '</div><div class="ef-card-value">'||l_projects||'</div><div class="ef-card-sub">'||l_projects_done||' completed</div></a>';
 
-  l_html := l_html || q'~<div class="ef-card" style="--ac:#5856d6;--ac2:#8a89e8;"><div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><span class="ef-card-label">Tasks</span></div><div class="ef-card-value">~' || l_tasks || '</div><div class="ef-card-sub">~'||l_tasks_done||' done &middot; '||l_blocked||' blocked</div></div>';
+  l_html := l_html || '<a href="'||APEX_PAGE.GET_URL(p_page=>42)||'" class="ef-card" style="--ac:#5856d6;--ac2:#8a89e8;">';
+  l_html := l_html || q'~<div class="ef-card-top"><div class="ef-icon-tile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><span class="ef-card-label">Tasks</span>~';
+  IF l_task_new > 0 THEN l_html := l_html || '<span class="ef-trend">+'||l_task_new||'</span>'; END IF;
+  l_html := l_html || '</div><div class="ef-card-value">'||l_tasks||'</div><div class="ef-card-sub">'||l_tasks_done||' done &middot; '||l_blocked||' blocked</div></a>';
 
   l_html := l_html || '</div>';
 
@@ -281,8 +373,18 @@ BEGIN
         l_new  := JSON_OBJECT_T.parse(r.new_values);
         l_keys := l_new.get_keys();
         FOR i IN 1 .. l_keys.COUNT LOOP
-          l_old_v := NVL(l_old.get_string(l_keys(i)), 'null');
-          l_new_v := NVL(l_new.get_string(l_keys(i)), 'null');
+          BEGIN
+            l_old_v := l_old.get_string(l_keys(i));
+          EXCEPTION WHEN OTHERS THEN
+            l_old_v := NULL;
+          END;
+          BEGIN
+            l_new_v := l_new.get_string(l_keys(i));
+          EXCEPTION WHEN OTHERS THEN
+            l_new_v := NULL;
+          END;
+          l_old_v := NVL(l_old_v, 'null');
+          l_new_v := NVL(l_new_v, 'null');
           IF l_old_v != l_new_v AND l_summary IS NULL THEN
             l_summary := LOWER(l_keys(i))||' changed';
           END IF;
@@ -300,6 +402,9 @@ BEGIN
       l_html := l_html || '<div class="ef-list-body"><div class="ef-list-title">'||INITCAP(r.table_name)||' #'||r.record_id||'</div><div class="ef-list-meta">'
         ||APEX_ESCAPE.HTML(l_summary)||' &middot; '||APEX_ESCAPE.HTML(r.changed_by)||'</div></div>';
       l_html := l_html || '<span class="ef-badge '||CASE r.action WHEN 'INSERT' THEN 'ok' WHEN 'DELETE' THEN 'crit' ELSE 'neutral' END||'">'||r.action||'</span></li>';
+    EXCEPTION WHEN OTHERS THEN
+      l_html := l_html || '<li><div class="ef-list-body"><div class="ef-list-meta">Unable to render entry #'
+        ||TO_CHAR(r.audit_log_id)||'</div></div></li>';
     END;
   END LOOP;
   IF NOT l_any_activity THEN
@@ -365,10 +470,18 @@ BEGIN
   l_html := l_html || '</div>';
 
   --------------------------------------------------------------------------
-  -- LIVE: ticking "updated Xs ago" text + auto-refresh every 60s via
-  -- apex.region('ef_dashboard_region').refresh(). Guarded with a window
-  -- flag so a region refresh (which re-executes this script) never stacks
-  -- a second interval on top of the first.
+  -- LIVE: ticking "Xs ago" text next to the Live pill, re-applied every
+  -- second since apex.region().refresh() swaps the region's DOM via
+  -- innerHTML, which does NOT re-execute this <script> tag - a "run once"
+  -- timer would keep finding a stale pill element after every 60s
+  -- refresh. Dark mode itself lives entirely in custom.css / widget.js
+  -- now (html[data-theme] set by the global header toggle), so this
+  -- region doesn't need to manage theme state at all - it just inherits
+  -- whatever the rest of the app is showing. The refresh uses the
+  -- region's auto-generated internal id ("R" || region id), since the
+  -- Static ID shown in Page Designer isn't wired into APEX's JS registry
+  -- for this region type. Both intervals are guarded against stacking if
+  -- this script is ever re-inserted into the DOM.
   --------------------------------------------------------------------------
   l_html := l_html || q'~<script>
 (function(){
@@ -378,9 +491,7 @@ BEGIN
     if (!pill || !txt) { return; }
     var ts = new Date(pill.getAttribute('data-ts'));
     var secs = Math.floor((Date.now() - ts.getTime()) / 1000);
-    if (secs < 5) { txt.textContent = 'Live'; }
-    else if (secs < 60) { txt.textContent = secs + 's ago'; }
-    else { txt.textContent = Math.floor(secs / 60) + 'm ago'; }
+    txt.textContent = secs < 5 ? 'Live' : secs < 60 ? (secs + 's ago') : (Math.floor(secs / 60) + 'm ago');
   }
   tick();
   if (!window.__efDashLiveTimer) {
@@ -388,9 +499,8 @@ BEGIN
   }
   if (!window.__efDashRefreshTimer) {
     window.__efDashRefreshTimer = setInterval(function(){
-      if (window.apex && apex.region && apex.region('dashboard-content')) {
-        apex.region('dashboard-content').refresh();
-      }
+      var r = window.apex && apex.region && apex.region('R9114769350531102');
+      if (r && r.refresh) { r.refresh(); }
     }, 60000);
   }
 })();
